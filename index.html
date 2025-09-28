@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Legal Today</title>
+    <style>
+        :root {
+            --accent: #0b5fff;
+            --muted: #666;
+            --card: #f8f9fb
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            margin: 0;
+            background: #fff
+        }
+
+        header {
+            background: linear-gradient(90deg, #0b5fff33, #00b4ff22);
+            padding: 28px 18px
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 18px
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 20px
+        }
+
+        p.lead {
+            margin: 0;
+            color: var(--muted)
+        }
+
+
+        .searchbar {
+            display: flex;
+            gap: 8px;
+            margin: 18px 0
+        }
+
+        .searchbar input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px
+        }
+
+        .searchbar button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer
+        }
+
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px
+        }
+
+        .chip {
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid #eee;
+            background: #fff;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px
+        }
+
+        .card {
+            background: var(--card);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #eee
+        }
+
+        .card h3 {
+            margin: 0 0 6px;
+            font-size: 16px
+        }
+
+        .meta {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 8px
+        }
+
+        .snippet {
+            font-size: 14px;
+            color: #222
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .btn {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid #ddd
+        }
+
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+
+        /* modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 88vh;
+            overflow: auto;
+            padding: 18px
+        }
+
+        .doc-title {
+            margin: 0 0 6px
+        }
+
+        pre.doc-text {
+            white-space: pre-wrap;
+            font-family: inherit;
+            background: #fafafa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #eee
+        }
+
+
+        @media (max-width:520px) {
+            h1 {
+                font-size: 18px
+            }
+
+            .searchbar input {
+                padding: 10px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Legal Today</h1>
+            <p class="lead">Search a small collection of laws, judgments and notes — simple static demo.</p>
+
+
+            <div class="searchbar" style="margin-top:12px">
+                <input id="q" placeholder="Search cases, sections, keywords e.g. 'section 420'" aria-label="search" />
+                <button id="searchBtn">Search</button>
+            </div>
+
+
+            <div class="filters">
+                <div class="chip" data-filter="all">All</div>
+                <div class="chip" data-filter="judgment">Judgments</div>
+                <div class="chip" data-filter="act">Acts</div>
+                <div class="chip" data-filter="order">Orders</div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="container" style="padding-top:18px">
+        <div id="stats" style="margin-bottom:10px;color:var(--muted)"></div>
+        <div class="results" id="results"></div>
+    </main>
+
+
+    <div class="modal-backdrop" id="modal">
+        <div class="modal" role="dialog" aria-modal="true">
+            <button id="closeModal"
+                style="float:right;border:none;background:none;font-size:20px;cursor:pointer">✕</button>
+            <h2 class="doc-title" id="docTitle">Document title</h2>
+            <div class="meta" id="docMeta"></div>
+            <pre class="doc-text" id="docText"></pre>
+        </div>
+    </div>
+
+
+    <footer>
+        Built for static demo resembling the layout of final project.
+    </footer>
+
+</body>
+</html>
