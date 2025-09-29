@@ -231,6 +231,94 @@
     <footer>
         Built for static demo resembling the layout of final project.
     </footer>
+    <script>
+        const DOCUMENTS = [
+            {
+                id: 1, type: 'judgment', title: 'State vs. Kumar (2018)', meta: 'Supreme Court — Nov 12, 2018', text: 'Facts: The accused was charged under section 420.\n\nHeld: Conviction quashed due to lack of mens rea.\n\nReasoning: The court held that...'
+            },
+            { id: 2, type: 'act', title: 'Indian Penal Code — Section 420', meta: 'IPC, s.420', text: 'Section 420 deals with cheating and dishonestly inducing delivery of property.\n\nExplanation: Whoever cheats and dishonestly induces any person to deliver property shall be punished with...' },
+            { id: 3, type: 'order', title: 'High Court — Interim Order (2020)', meta: 'High Court — May 1, 2020', text: 'Interim order passed restraining eviction pending final hearing.\n\nGrounds: Violation of principles of natural justice.' },
+            { id: 4, type: 'judgment', title: 'Ramesh vs. Union (2015)', meta: 'Bombay HC — Aug 20, 2015', text: 'This judgment interprets section 125 in light of recent precedent. The court observed that...' }
+        ];
 
+
+        function tokenize(s) { return s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
+        function scoreDoc(doc, tokens) {
+            const hay = (doc.title + ' ' + doc.meta + ' ' + doc.text).toLowerCase();
+            let score = 0; for (const t of tokens) { if (hay.includes(t)) score += 1 + (hay.indexOf(t) === 0 ? 0.2 : 0); }
+            return score;
+        }
+
+
+        function renderResults(list) {
+            const container = document.getElementById('results');
+            container.innerHTML = '';
+            if (list.length === 0) { container.innerHTML = '<div style="color:var(--muted)">No results — try different keywords.</div>'; return }
+            for (const d of list) {
+                const el = document.createElement('article'); el.className = 'card';
+                el.innerHTML = `
+                <h3>${escapeHtml(d.title)}</h3>
+                <div class="meta">${escapeHtml(d.meta)} • ${escapeHtml(d.type)}</div>
+                <div class="snippet">${escapeHtml(d.text.slice(0, 220))}...</div>
+                <div class="actions">
+                <button class="btn" data-id="${d.id}">Read</button>
+                <button class="btn btn-secondary" onclick="copyLink(${d.id})">Copy link</button>
+                </div>
+                `;
+                container.appendChild(el);
+            }
+            // wire read buttons
+            container.querySelectorAll('button[data-id]').forEach(b => b.addEventListener('click', () => openDoc(Number(b.dataset.id))));
+        }
+
+
+        function search() {
+            const q = document.getElementById('q').value.trim();
+            const activeFilter = document.querySelector('.chip.active')?.dataset.filter || 'all';
+            const tokens = tokenize(q);
+            let results = DOCUMENTS.slice();
+            if (activeFilter !== 'all') results = results.filter(r => r.type === activeFilter);
+            if (tokens.length > 0) {
+                results = results.map(d => ({ d, score: scoreDoc(d, tokens) })).filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.d);
+            }
+            document.getElementById('stats').textContent = `${results.length} result(s) — query: "${q || '*'}"`;
+            renderResults(results);
+        }
+
+
+        function openDoc(id) {
+            const doc = DOCUMENTS.find(d => d.id === id); if (!doc) return;
+            document.getElementById('docTitle').textContent = doc.title;
+            document.getElementById('docMeta').textContent = doc.meta + ' • ' + doc.type;
+            document.getElementById('docText').textContent = doc.text;
+            document.getElementById('modal').style.display = 'flex';
+        }
+        document.getElementById('closeModal').addEventListener('click', () => document.getElementById('modal').style.display = 'none');
+        document.getElementById('searchBtn').addEventListener('click', search);
+        document.getElementById('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') search(); });
+
+
+        // filters
+        document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+            document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+            c.classList.add('active'); search();
+        }));
+        // default active
+        document.querySelector('.chip[data-filter="all"]').classList.add('active');
+
+
+        function copyLink(id) {
+            const fake = `${location.origin}${location.pathname}#doc-${id}`;
+            navigator.clipboard?.writeText(fake).then(() => alert('Link copied to clipboard'));
+        }
+
+
+        // small helper
+        function escapeHtml(s) { return s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'); }
+
+
+        // initial render
+        renderResults(DOCUMENTS);
+    </script>
 </body>
 </html>
