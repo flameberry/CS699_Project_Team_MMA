@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import time
-import json
 import pandas as pd  # for CSV/Excel export
 
 BASE_URL = "https://indiankanoon.org"
@@ -21,21 +20,31 @@ def search_cases(query, page=0):
         raise Exception(f"Failed to fetch search page: {resp.status_code}")
 
     soup = BeautifulSoup(resp.text, "html.parser")
-
+    id = 1
     cases = []
     for result in soup.select("div.result_title a"):
         case_url = BASE_URL + result.get("href")
         case_title = result.text.strip()
-
+        case_type = ""
         parent = result.find_parent("div", class_="result_title")
         meta_div = parent.find_next_sibling("div", class_="result_subtitle")
         meta = meta_div.text.strip() if meta_div else ""
+        if "act" in case_title.lower():
+            case_type = "act"
+        elif "order" in case_title.lower():
+            case_type = "order"
+        else:
+            case_type = "judgement" 
+
 
         cases.append({
+            "id": id,
             "title": case_title,
             "url": case_url,
-            "meta": meta
+            "meta": meta,
+            "type": case_type
         })
+        id+=1
 
     return cases
 
@@ -49,12 +58,14 @@ def get_case_text(case_url):
         raise Exception(f"Failed to fetch case page: {resp.status_code}")
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    content_div = soup.find("div", {"id": "content"})
-    text = content_div.get_text(separator="\n").strip() if content_div else ""
-    return text
+    content_div = soup.find_all("p",limit=5)
+    text = ""
+    for ele in content_div:
+        text += ele.get_text(separator="\n").strip() if content_div else ""
+    return text[:1000]
 
 
-def scrape_india_kanoon(query, max_pages=1, delay=2):
+def scrape_india_kanoon(query, max_pages=1, delay=1):
     """
     Scrape India Kanoon search results and fetch judgments.
     """
@@ -70,10 +81,10 @@ def scrape_india_kanoon(query, max_pages=1, delay=2):
                 case_text = get_case_text(case["url"])
                 case["text"] = case_text  # store full text
                 all_cases.append(case)
-                print(f"    ✔ Scraped {case['title']}")
+                print(f"Scraped {case['title']}")
                 time.sleep(delay)
             except Exception as e:
-                print(f"    ✘ Failed: {e}")
+                print(f"Failed: {e}")
 
     return all_cases
 
@@ -92,13 +103,13 @@ def save_to_csv_excel(cases, query):
     print(f"\nSaved {len(cases)} cases → {csv_file} and {excel_file}")
 
 
-if __name__ == "__main__":
-    query = "right to privacy"
-    results = scrape_india_kanoon(query, max_pages=1)
+# if __name__ == "__main__":
+#     query = "right to privacy"
+#     results = scrape_india_kanoon(query, max_pages=1)
 
-    # Preview first case
-    print("\nSample result:")
-    print(json.dumps(results[0], indent=2))
+#     # Preview first case
+#     print("\nSample result:")
+#     print(json.dumps(results, indent=2))
 
     # Save all results
-    save_to_csv_excel(results, query)
+#     save_to_csv_excel(results, query)
