@@ -195,10 +195,10 @@
             <p class="lead">Search a small collection of laws, judgments and notes — simple static demo.</p>
 
 
-            <div class="searchbar" style="margin-top:12px">
-                <input id="q" placeholder="Search cases, sections, keywords e.g. 'section 420'" aria-label="search" />
+            <form class="searchbar" style="margin-top:12px" action="search_query" method="post">
+                <input id="q" name="query" placeholder="Search cases, sections, keywords e.g. 'section 420'" aria-label="search" />
                 <button id="searchBtn">Search</button>
-            </div>
+            </form>
 
 
             <div class="filters">
@@ -231,16 +231,18 @@
     <footer>
         Built for static demo resembling the layout of final project.
     </footer>
+    {% if cases %}
     <script>
-        const DOCUMENTS = [
-            {
-                id: 1, type: 'judgment', title: 'State vs. Kumar (2018)', meta: 'Supreme Court — Nov 12, 2018', text: 'Facts: The accused was charged under section 420.\n\nHeld: Conviction quashed due to lack of mens rea.\n\nReasoning: The court held that...'
-            },
-            { id: 2, type: 'act', title: 'Indian Penal Code — Section 420', meta: 'IPC, s.420', text: 'Section 420 deals with cheating and dishonestly inducing delivery of property.\n\nExplanation: Whoever cheats and dishonestly induces any person to deliver property shall be punished with...' },
-            { id: 3, type: 'order', title: 'High Court — Interim Order (2020)', meta: 'High Court — May 1, 2020', text: 'Interim order passed restraining eviction pending final hearing.\n\nGrounds: Violation of principles of natural justice.' },
-            { id: 4, type: 'judgment', title: 'Ramesh vs. Union (2015)', meta: 'Bombay HC — Aug 20, 2015', text: 'This judgment interprets section 125 in light of recent precedent. The court observed that...' }
-        ];
-
+        
+        // const DOCUMENTS = [
+        //     {
+        //         id: 1, type: 'judgment', title: 'State vs. Kumar (2018)', meta: 'Supreme Court — Nov 12, 2018', text: 'Facts: The accused was charged under section 420.\n\nHeld: Conviction quashed due to lack of mens rea.\n\nReasoning: The court held that...'
+        //     },
+        //     { id: 2, type: 'act', title: 'Indian Penal Code — Section 420', meta: 'IPC, s.420', text: 'Section 420 deals with cheating and dishonestly inducing delivery of property.\n\nExplanation: Whoever cheats and dishonestly induces any person to deliver property shall be punished with...' },
+        //     { id: 3, type: 'order', title: 'High Court — Interim Order (2020)', meta: 'High Court — May 1, 2020', text: 'Interim order passed restraining eviction pending final hearing.\n\nGrounds: Violation of principles of natural justice.' },
+        //     { id: 4, type: 'judgment', title: 'Ramesh vs. Union (2015)', meta: 'Bombay HC — Aug 20, 2015', text: 'This judgment interprets section 125 in light of recent precedent. The court observed that...' }
+        // ];
+        const DOCUMENTS = {{ cases | tojson }};
 
         function tokenize(s) { return s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
         function scoreDoc(doc, tokens) {
@@ -319,6 +321,8 @@
 
         // initial render
         renderResults(DOCUMENTS);
+        
     </script>
+    {% endif %}
 </body>
 </html>
