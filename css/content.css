@@ -1,0 +1,29 @@
+
+.main-content {
+    margin-top: 2rem;
+}
+
+.h-section {
+    text-align: center;
+    max-width: 768px;
+    margin: 0 auto;
+}
+
+.h-text h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin: 0;
+}
+
+.h-text p {
+    margin-top: 1rem;
+    font-size: 1.125rem;
+    color: var(--color-muted-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .h-text p {
+        color: var(--color-muted-dark);
+    }
+}

@@ -1,0 +1,60 @@
+:root {
+    --color-primary: #3b82f6;
+    --color-primary-hover: #2563eb;
+    --color-text-light: #e2e8f0;
+    --color-text-dark: #1e293b;
+    --color-bg-light: #f1f5f9;
+    --color-bg-dark: #0f172a;
+    --color-surface-light: #ffffff;
+    --color-surface-dark: #1e293b;
+    --color-border-light: #e2e8f0;
+    --color-border-dark: #334155;
+    --color-muted-light: #64748b;
+    --color-muted-dark: #94a3b8;
+
+    --font-family: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: var(--color-bg-light);
+        color: var(--color-text-dark);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--color-bg-dark);
+        color: var(--color-text-light);
+    }
+
+    .surface {
+        background-color: var(--color-surface-dark);
+        border-color: var(--color-border-dark);
+    }
+
+    .form-input {
+        background-color: var(--color-border-dark);
+        border-color: #475569;
+        color: var(--color-text-light);
+    }
+
+    .logo span {
+        color: var(--color-text-light);
+    }
+
+    .button-l {
+        background-color: #334155;
+        color: var(--color-text-light);
+    }
+
+    .button-l:hover {
+        background-color: #475569;
+    }
+}

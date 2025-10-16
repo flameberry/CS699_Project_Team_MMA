@@ -31,19 +31,24 @@
             </header>
             <!---Content-->
             <main class="main-content">
-                <section class="h-section">
-                    <div class="h-text">
-                        <h2>Legal Research Simplified ...</h2>
-                        <p>Access a vast database of legal judgements from Supreme Court and access summarised views and
-                            search over them</p>
-                    </div>
-                    <form id="search-form" class="search-form">
-                        <div class="search-input">
-                            <input type="text" id="search-input"
-                                placeholder="Search using case titles, citations, keywords..." required>
-                            <button type="submit" class="button-r search-button">Search</button>
+                <section class="d-section">
+                        <div class="d-toolbar">
+                             <a href="javascript:history.back()" class="link">&larr; Back to Results</a>
                         </div>
-                    </form>
+                        <div id="l-document" class="l-container"><div class="spinner"></div></div>
+                        <article id="d-content" class="d-content hidden">
+                            <header class="d-header">
+                                <h1 id="doc-title"></h1>
+                                <p id="doc-citation" class="citation"></p>
+                                <div class="metadata">
+                                    <div><strong>Judges:</strong> <span id="doc-judges"></span></div>
+                                    <div><strong>Date:</strong> <span id="doc-date"></span></div>
+                                </div>
+                            </header>
+                            <div id="doc-full-text" class="d-body">
+                                <!-- Yaha pe aayenge docs -->
+                            </div>
+                        </article>
                 </section>
             </main>
         </div>
@@ -68,7 +73,8 @@
         </div>
     </div>
 
-    <script src="../js/main.js"></script>
+<script src="../js/main.js"></script>
+    
 </body>
 
 </html>

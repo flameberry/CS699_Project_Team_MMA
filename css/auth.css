@@ -1,0 +1,83 @@
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+    background-color: var(--color-surface-light);
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 448px;
+    padding: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .modal-content {
+        background-color: var(--color-surface-dark);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+#mod-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-muted-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .close-modal-btn {
+        color: var(--color-muted-dark);
+    }
+}
+#auth-form>div:first-of-type {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--color-border-light);
+    outline: none;
+    background: transparent;
+}
+
+.form-input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+#auth-form button {
+    margin-top: 1.5rem;
+}
+
+.mod-switch-text {
+    text-align: center;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+}
+
+

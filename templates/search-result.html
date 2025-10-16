@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/buttons.css">
     <link rel="stylesheet" href="../css/content.css">
@@ -31,19 +31,16 @@
             </header>
             <!---Content-->
             <main class="main-content">
-                <section class="h-section">
-                    <div class="h-text">
-                        <h2>Legal Research Simplified ...</h2>
-                        <p>Access a vast database of legal judgements from Supreme Court and access summarised views and
-                            search over them</p>
+                <section class="r-section">
+                    <div class="r-header">
+                        <h2>Search Results for "<span id="search-query-display">...</span>"</h2>
+                        <a href="index.html" class="link">&larr; New Search</a>
                     </div>
-                    <form id="search-form" class="search-form">
-                        <div class="search-input">
-                            <input type="text" id="search-input"
-                                placeholder="Search using case titles, citations, keywords..." required>
-                            <button type="submit" class="button-r search-button">Search</button>
-                        </div>
-                    </form>
+                    <div id="l-results" class="l-container">
+                        <div class="spinner"></div>
+                    </div>
+                    <div id="results-list" class="results-list">
+                        <!--Load the results here (search) hehehe.... -->
                 </section>
             </main>
         </div>
@@ -67,8 +64,8 @@
             </form>
         </div>
     </div>
+<script src="../js/main.js"></script>
 
-    <script src="../js/main.js"></script>
 </body>
 
 </html>

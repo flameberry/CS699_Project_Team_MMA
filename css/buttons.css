@@ -1,0 +1,49 @@
+
+.button-primary,
+.button-l,
+.button-r {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button-primary,
+.button-r {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.button-primary:hover,
+.button-r:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.button-l {
+    background-color: var(--color-border-light);
+    color: var(--color-text-dark);
+}
+
+.button-l:hover {
+    background-color: #cbd5e1;
+}
+
+.full-width-btn {
+    width: 100%;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.link,
+.mod-switch-text a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.link:hover,
+.mod-switch-text a:hover {
+    text-decoration: underline;
+}
