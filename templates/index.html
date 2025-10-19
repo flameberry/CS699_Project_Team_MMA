@@ -8,14 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/layout.css">
-    <link rel="stylesheet" href="../css/buttons.css">
-    <link rel="stylesheet" href="../css/content.css">
-    <link rel="stylesheet" href="../css/form.css">
-    <link rel="stylesheet" href="../css/auth.css">
-    <link rel="stylesheet" href="../css/results.css">
-    <link rel="stylesheet" href="../css/documents.css">
+   <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/layout.css">
+    <link rel="stylesheet" href="../static/css/buttons.css">
+    <link rel="stylesheet" href="../static/css/content.css">
+    <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/results.css">
+    <link rel="stylesheet" href="../static/css/documents.css">
 </head>
 
 <body>
@@ -23,11 +23,17 @@
         <div class="content-wrapper">
             <!--Header-->
             <header class="header">
-                <a href="index.html" class="logo">Legal<span>Today</span></a>
+                <a href="http://localhost:5000/" class="logo">Legal<span>Today</span></a>
+                {% if login_status==False %}
                 <div class="header-buttons">
                     <button id="login-but" class="button-l">Login</button>
                     <button id="register-but" class="button-r">Registration</button>
                 </div>
+                {% else %}
+                <div class="header-buttons">
+                    <h1>{{ name }}</h1>
+                </div>
+                {% endif %}
             </header>
             <!---Content-->
             <main class="main-content">
@@ -37,9 +43,9 @@
                         <p>Access a vast database of legal judgements from Supreme Court and access summarised views and
                             search over them</p>
                     </div>
-                    <form id="search-form" class="search-form">
+                    <form id="search-form" class="search-form" action="http://localhost:5000/search_query" method="GET">
                         <div class="search-input">
-                            <input type="text" id="search-input"
+                            <input type="text" id="search-input" name="query"
                                 placeholder="Search using case titles, citations, keywords..." required>
                             <button type="submit" class="button-r search-button">Search</button>
                         </div>
@@ -55,10 +61,10 @@
                 <h3 id="mod-title" class="text-2xl font-bold">Login</h3>
                 <button id="close-modal-btn" class="close-modal-btn">&times;</button>
             </div>
-            <form id="auth-form">
-                <div class="space-y-4">
-                    <input type="email" placeholder="Email Address" class="form-input" required>
-                    <input type="password" placeholder="Password" class="form-input" required>
+            <form id="auth-form" method="POST">
+                <div class="space-y-4" id="login-form-div">
+                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email" required>
+                    <input type="password" placeholder="Password" class="form-input" name="password" id = "login-pwd" required>
                 </div>
                 <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
                 <p id="mod-switch-text" class="mod-switch-text"> Create An Account Today:
@@ -68,7 +74,7 @@
         </div>
     </div>
 
-    <script src="../js/main.js"></script>
+    <script src="../static/js/main.js"></script>
 </body>
 
 </html>

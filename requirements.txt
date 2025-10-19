@@ -1,0 +1,7 @@
+flask
+requests
+sqlite3
+bcrypt
+pandas
+bs4
+flask-session

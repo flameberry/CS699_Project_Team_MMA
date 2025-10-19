@@ -82,7 +82,7 @@ def scrape_india_kanoon(query, max_pages=1, delay=1):
                 case["text"] = case_text  # store full text
                 all_cases.append(case)
                 print(f"Scraped {case['title']}")
-                time.sleep(delay)
+                # time.sleep(delay)
             except Exception as e:
                 print(f"Failed: {e}")
 

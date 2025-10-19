@@ -2,11 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //Part needed to channged for database usage - Madhur Bhai
 
     const mockDatabase = {
-        "search-results": [
-            { id: "doc001", case_title: "Union of India Vs. M/s G.S. Chatha Rice Mills", citation: "Civil Appeal No(s). 2176 of 2021", judgment_date: "2021-03-10", snippet: "The core issue revolves around the interpretation of customs tariffs and the applicability of certain notifications..." },
-            { id: "doc002", case_title: "State of Punjab vs. Principal Secretary to the Governor", citation: "Writ Petition (Civil) No. 1224 of 2023", judgment_date: "2023-11-10", snippet: "This case addresses the constitutional powers of the Governor regarding the assent to Bills..." },
-            { id: "doc003", case_title: "Competition Commission of India vs. Google LLC", citation: "Civil Appeal No. 54 of 2023", judgment_date: "2023-04-19", snippet: "Examining the allegations of abuse of dominant position by Google in the Android ecosystem..." }
-        ],
+        // "search-results": [
+        //     { id: "doc001", case_title: "Union of India Vs. M/s G.S. Chatha Rice Mills", citation: "Civil Appeal No(s). 2176 of 2021", judgment_date: "2021-03-10", snippet: "The core issue revolves around the interpretation of customs tariffs and the applicability of certain notifications..." },
+        //     { id: "doc002", case_title: "State of Punjab vs. Principal Secretary to the Governor", citation: "Writ Petition (Civil) No. 1224 of 2023", judgment_date: "2023-11-10", snippet: "This case addresses the constitutional powers of the Governor regarding the assent to Bills..." },
+        //     { id: "doc003", case_title: "Competition Commission of India vs. Google LLC", citation: "Civil Appeal No. 54 of 2023", judgment_date: "2023-04-19", snippet: "Examining the allegations of abuse of dominant position by Google in the Android ecosystem..." }
+        // ],
         "documents": {
             "doc001": { id: "doc001", case_title: "Union of India Vs. M/s G.S. Chatha Rice Mills", citation: "Civil Appeal No(s). 2176 of 2021", judgment_date: "2021-03-10", judges: ["Hon'ble Mr. Justice D.Y. Chandrachud", "Hon'ble Mr. Justice M.R. Shah"], full_text: "<p>The present appeal arises from a judgment...</p>" },
             "doc002": { id: "doc002", case_title: "State of Punjab vs. Principal Secretary to the Governor", citation: "Writ Petition (Civil) No. 1224 of 2023", judgment_date: "2023-11-10", judges: ["Hon'ble Chief Justice D.Y. Chandrachud", "Hon'ble Mr. Justice J.B. Pardiwala"], full_text: "<p>This is a significant case concerning the constitutional relationship...</p>" },
@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return urlParams.get(param);
     };
 
-    const fetchSearchResults = async (query) => {
-        return new Promise(resolve => setTimeout(() => resolve(mockDatabase['search-results']), 500));
-    };
+    // const fetchSearchResults = async (query) => {
+    //     return new Promise(resolve => setTimeout(() => resolve(mockDatabase['search-results']), 500));
+    // };
 
     const fetchDocumentById = async (id) => {
         return new Promise(resolve => setTimeout(() => resolve(mockDatabase.documents[id] || null), 500));
@@ -29,37 +29,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Personal functions for each page
 
-    const handleHomepage = () => {
-        const searchForm = document.getElementById('search-form');
-        if (!searchForm) return;
-        searchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const searchInput = document.getElementById('search-input');
-            const query = searchInput.value.trim();
-            if (query) window.location.href = `search-result.html?q=${encodeURIComponent(query)}`;
-        });
-    };
+    // const handleHomepage = () => {
+        
+    // };
 
     const handleSearchResultsPage = async () => {
-        const query = getQueryParam('q');
-        const searchDisplay = document.getElementById('search-query-display');
+        // const query = getQueryParam('q');
+        // const searchDisplay = document.getElementById('search-query-display');
         const resultsList = document.getElementById('results-list');
         const loadResults = document.getElementById('l-results');
-        if (!query || !searchDisplay || !resultsList) return;
-        searchDisplay.textContent = query;
-        const results = await fetchSearchResults(query);
+        if ( !resultsList) return;
+        // searchDisplay.textContent = query;
+        const results = window.results;
         if (loadResults) loadResults.style.display = 'none';
         resultsList.innerHTML = '';
         if (!results || results.length === 0) {
             resultsList.innerHTML = '<p>No results found</p>';
             return;
         }
+        console.log(results);
         results.forEach(result => {
             const el = document.createElement('div');
             el.className = 'result-item';
             el.innerHTML = `
                 <a href="Doc_view_page.html?id=${encodeURIComponent(result.id)}">
-                    <h3>${result.case_title}</h3>
+                    <h3>${result.title}</h3>
                     <p class="citation">${result.citation} • ${result.judgment_date}</p>
                     <p class="snippet">${result.snippet}</p>
                 </a>`;
@@ -92,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authMod = document.getElementById('auth-mod');
         if (!authMod) return;
         authMod.style.display = 'none';
+        // var authForm = document.getElementById("auth-form");
         const modTitle = document.getElementById('mod-title');
         const modActionBut = document.getElementById('mod-action-btn');
         const modSwitchText = document.getElementById('mod-switch-text');
@@ -99,15 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const registerBut = document.getElementById('register-but');
         const closeModBut = document.getElementById('close-modal-btn');
         const authForm = document.getElementById('auth-form');
+        const loginFormDiv = document.getElementById('login-form-div');
 
         const openMod = (isLogin = true) => {
             if (isLogin) {
                 modTitle.textContent = 'Login';
                 modActionBut.textContent = 'Login';
+                loginFormDiv.innerHTML = '<input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email" required><input type="password" placeholder="Password" class="form-input" name="password" id = "login-pwd" required>'
                 modSwitchText.innerHTML = `Create An Account Today: <a href="#" id="mod-switch-link" class="link">Register</a>`;
             } else {
                 modTitle.textContent = 'Registration';
                 modActionBut.textContent = 'Create Account';
+                loginFormDiv.innerHTML = '<input type="text" placeholder="Name" class="form-input" name="name" id="reg-name" required><input type="date" placeholder="Date Of Birth" class="form-input" name="dob" id = "reg-dob" required>'+loginFormDiv.innerHTML;
                 modSwitchText.innerHTML = `Already have an account? <a href="#" id="mod-switch-link" class="link">Login</a>`;
             }
             authMod.style.display = 'flex';
@@ -131,25 +129,60 @@ document.addEventListener('DOMContentLoaded', () => {
         if (authForm) {
             authForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                alert(`${modTitle.textContent} successful`);
-                closeMod();
+                if(modTitle.textContent === 'Registration'){
+                    const email = document.getElementById("login-email").value;
+                    const pwd = document.getElementById("login-pwd").value;
+                    const name = document.getElementById("reg-name").value;
+                    const dob = document.getElementById("reg-dob").value;
+                    fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ "email": email, "pwd":pwd, "name":name, "dob":dob })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data["registration"]==0){
+                            alert(`${modTitle.textContent} successful`);
+                            openMod(true);
+                        }
+                    });
+                }
+                else{
+                    var email = document.getElementById("login-email").value;
+                    var pwd = document.getElementById("login-pwd").value;
+                    fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ "email": email, "pwd":pwd })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data["login"]==false){
+                            alert(`${modTitle.textContent} credentials not found`);
+                        }
+                        else{
+                            alert(`${modTitle.textContent} successful`);
+                            closeMod();
+                            location.reload();
+                        }
+                    });
+                }
             });
         }
     };
 
     //had to be made in single file bcoz gave error for import module.....
-    const path = window.location.pathname.split('/').pop();
-    switch (path) {
-        case 'index.html':
-        case '':
-            handleHomepage();
-            break;
-        case 'search-result.html':
-            handleSearchResultsPage();
-            break;
-        case 'Doc_view_page.html':
-            handleDocumentPage();
-            break;
+    const path = window.location.pathname;
+    if (path.includes("search_query")) {
+        console.log(path);
+        handleSearchResultsPage();
+    }
+    else if(path.includes("doc_view")){
+        handleDocumentPage();
     }
     handleAuthMod();
 });
