@@ -30,8 +30,47 @@ def search_query():
     if request.method=="GET":
         query = request.args.get("query")
         print(query)
-        cases = scrape_india_kanoon(query)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+        select id,case_title,citation,judgement_date,snippet from cases where case_title LIKE ? or citation LIKE ? or snippet LIKE ?
+        ''',(f"%{query}%", f"%{query}%", f"%{query}%"))
+        cases=[
+            {
+                "id":row[0],
+                "title":row[1],
+                "citation":row[2],
+                "judgment_date":row[3],
+                "snippet":row[4]
+            } for row in cursor.fetchall()
+        ]
+        conn.close()
         return render_template('search-result.html',query=query,cases=cases,login_status=session.get("login_status",False),name=session.get("name",None))
+    
+@app.route('/doc-view/<case_id>',methods=["GET","POST"])
+def doc_view(case_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+    select case_title, citation, judgement_date, judges, full_text from cases where id = ?''',(case_id,))
+    case_data = cursor.fetchone()
+    conn.close()
+    if not case_data:
+        return "Document not found", 404
+    data={
+            "id":case_id,
+            "title":case_data[0],
+            "citation":case_data[1],
+            "judgement_date":case_data[2],
+            "judges": case_data[3].split(','),
+            "full_text": case_data[4]
+        }
+    return render_template(
+        "Doc_view_page.html",
+        case=data,
+        login_status=session.get("login_status",False),
+        name=session.get("name", None)
+    )
 
 @app.route('/login',methods=["GET","POST"])
 def login():
@@ -94,5 +133,40 @@ if __name__ == '__main__':
     dob TEXT
     )
     ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS cases (
+    id TEXT PRIMARY KEY ,
+    case_title TEXT NOT NULL,
+    citation TEXT,
+    judgement_date TEXT,
+    judges TEXT,
+    snippet TEXT,
+    full_text TEXT
+    )
+    ''')
     conn.commit()
+    sample_cases = [
+        ("doc001", "Union of India Vs. M/s G.S. Chatha Rice Mills", "Civil Appeal No(s). 2176 of 2021", "2021-03-10",
+         "Hon'ble Mr. Justice D.Y. Chandrachud,Hon'ble Mr. Justice M.R. Shah",
+         "The core issue revolves around the interpretation of customs tariffs...",
+         "<p>The present appeal arises from a judgment...</p>"),
+        ("doc002", "State of Punjab vs. Principal Secretary to the Governor", "Writ Petition (Civil) No. 1224 of 2023", "2023-11-10",
+         "Hon'ble Chief Justice D.Y. Chandrachud,Hon'ble Mr. Justice J.B. Pardiwala",
+         "This case addresses the constitutional powers of the Governor...",
+         "<p>This is a significant case concerning the constitutional relationship...</p>"),
+        ("doc003", "Competition Commission of India vs. Google LLC", "Civil Appeal No. 54 of 2023", "2023-04-19",
+         "Hon'ble Chief Justice D.Y. Chandrachud,Hon'ble Mr. Justice P.S. Narasimha",
+         "Examining the allegations of abuse of dominant position by Google...",
+         "<p>This landmark case tests the application of Indian competition law...</p>")
+    ]
+
+    for c in sample_cases:
+        cursor.execute("Select id from cases where id=?",(c[0],))
+        if cursor.fetchone() is None:
+            cursor.execute('''
+            insert into cases (id,case_title,citation,judgement_date,judges,snippet,full_text)
+            values (?,?,?,?,?,?,?)       
+            ''',c)
+    conn.commit()
+    conn.close()
     app.run(debug=True)

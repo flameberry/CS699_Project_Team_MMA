@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.createElement('div');
             el.className = 'result-item';
             el.innerHTML = `
-                <a href="Doc_view_page.html?id=${encodeURIComponent(result.id)}">
+                <a href="/doc-view/${encodeURIComponent(result.id)}">
                     <h3>${result.title}</h3>
                     <p class="citation">${result.citation} • ${result.judgment_date}</p>
                     <p class="snippet">${result.snippet}</p>
@@ -181,8 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(path);
         handleSearchResultsPage();
     }
-    else if(path.includes("doc_view")){
-        handleDocumentPage();
-    }
+    // else if(path.includes("doc_view")){
+    //     handleDocumentPage();
+    // }
     handleAuthMod();
 });
