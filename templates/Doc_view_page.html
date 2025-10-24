@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../static/css/auth.css">
     <link rel="stylesheet" href="../static/css/results.css">
     <link rel="stylesheet" href="../static/css/documents.css">
+    <link rel="stylesheet" href="../static/css/user.css">
 </head>
 
 <body>
@@ -32,7 +33,12 @@
                 </div>
                 {% else %}
                 <div class="header-buttons">
-                    <h1>{{ name }}</h1>
+                    <div class="user-menu">
+                    <span class="username">{{ name }}</span>
+                    <div class="dropdown">
+                        <a href="#" id="history">History</a>
+                        <a href="#" id="logout">Logout</a>
+                    </div>
                 </div>
                 {% endif %}
                 </div>
