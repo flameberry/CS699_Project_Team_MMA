@@ -17,21 +17,36 @@ def get_db_connection():
 def index():
     email = None
     name = None
+    past_queries=[]
     if session.get("login_status") is None:
         session["login_status"] = False
     if session.get("email"):
         email = session["email"]
     if session.get("name"):
         name = session["name"]
-    return render_template("index.html",login_status=session["login_status"],name=name,email=email)
+    if session["login_status"]:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC''',(session["email"],))
+        past_queries = cursor.fetchall()
+        conn.close()
+
+    return render_template("index.html",login_status=session["login_status"],name=name,email=email,past_queries=past_queries)
 
 @app.route('/search_query',methods=["GET","POST"])
 def search_query():
     if request.method=="GET":
         query = request.args.get("query")
-        print(query)
         conn = get_db_connection()
         cursor = conn.cursor()
+        if session["login_status"]:
+            cursor.execute('''SELECT query FROM history ORDER BY created_at DESC LIMIT 1''')
+            top_query = cursor.fetchone()
+            if top_query and len(top_query)>0 and top_query[0]==query:
+                cursor.execute("UPDATE history SET created_at = CURRENT_TIMESTAMP where id = ( SELECT id FROM history ORDER BY created_at DESC LIMIT 1)")
+            else:
+                cursor.execute('''INSERT INTO history (email,query) VALUES (?,?)''',(session["email"],query))
+            conn.commit()
         cursor.execute('''
         select id,case_title,citation,judgement_date,snippet from cases where case_title LIKE ? or citation LIKE ? or snippet LIKE ?
         ''',(f"%{query}%", f"%{query}%", f"%{query}%"))
@@ -122,6 +137,15 @@ def logout():
     session["login_status"] = False
     return jsonify({"login":session["login_status"]})
 
+@app.route('/history',methods=['GET'])
+def history():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC''',(session["email"],))
+    past_queries = cursor.fetchall()
+    conn.close()
+    return render_template("history.html",past_queries=past_queries,name=session.get("name",None),email=session.get("email",None))
+
 if __name__ == '__main__':
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -142,6 +166,14 @@ if __name__ == '__main__':
     judges TEXT,
     snippet TEXT,
     full_text TEXT
+    )
+    ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL ,
+    query TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     ''')
     conn.commit()

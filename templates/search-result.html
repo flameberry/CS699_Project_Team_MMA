@@ -24,7 +24,7 @@
         <div class="content-wrapper">
             <!--Header-->
             <header class="header">
-                <a href="http://localhost:5000/" class="logo">Legal<span>Today</span></a>
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
                 {% if login_status==0 %}
                 <div class="header-buttons">
                     <button id="login-but" class="button-l">Login</button>
@@ -46,7 +46,7 @@
                 <section class="r-section">
                     <div class="r-header">
                         <h2>Search Results for "<span id="search-query-display">{{ query }}</span>"</h2>
-                        <a href="http://localhost:5000/" class="link">&larr; New Search</a>
+                        <a href="{{ url_for('index') }}" class="link">&larr; New Search</a>
                     </div>
                     <div id="l-results" class="l-container">
                         <div class="spinner"></div>

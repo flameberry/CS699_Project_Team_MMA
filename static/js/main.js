@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((data) => {
                 if (data.login === false) {
                 alert("Logged out successfully!");
-                window.location.href = "/"; 
+                // window.location.href = "/"; 
+                location.reload();
                 }
             })
             .catch((err) => console.error("Logout failed:", err));

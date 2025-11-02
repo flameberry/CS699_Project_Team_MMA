@@ -24,7 +24,7 @@
         <div class="content-wrapper">
             <!--Header-->
             <header class="header">
-                <a href="http://localhost:5000" class="logo">Legal<span>Today</span></a>
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
                 <div class="header-buttons">
                     {% if login_status==0 %}
                 <div class="header-buttons">

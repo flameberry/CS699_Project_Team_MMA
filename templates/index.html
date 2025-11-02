@@ -24,7 +24,7 @@
         <div class="content-wrapper">
             <!--Header-->
             <header class="header">
-                <a href="http://localhost:5000/" class="logo">Legal<span>Today</span></a>
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
                 {% if login_status==False %}
                 <div class="header-buttons">
                     <button id="login-but" class="button-l">Login</button>
@@ -50,7 +50,7 @@
                         <p>Access a vast database of legal judgements from Supreme Court and access summarised views and
                             search over them</p>
                     </div>
-                    <form id="search-form" class="search-form" action="http://localhost:5000/search_query" method="GET">
+                    <form id="search-form" class="search-form" action="{{ url_for('search_query') }}" method="GET">
                         <div class="search-input">
                             <input type="text" id="search-input" name="query"
                                 placeholder="Search using case titles, citations, keywords..." required>
