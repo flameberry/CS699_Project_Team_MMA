@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../static/css/auth.css">
     <link rel="stylesheet" href="../static/css/results.css">
     <link rel="stylesheet" href="../static/css/documents.css">
+    <link rel="stylesheet" href="../static/css/user.css">
 </head>
 
 <body>
@@ -23,7 +24,7 @@
         <div class="content-wrapper">
             <!--Header-->
             <header class="header">
-                <a href="http://localhost:5000" class="logo">Legal<span>Today</span></a>
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
                 <div class="header-buttons">
                     {% if login_status==0 %}
                 <div class="header-buttons">
@@ -32,7 +33,12 @@
                 </div>
                 {% else %}
                 <div class="header-buttons">
-                    <h1>{{ name }}</h1>
+                    <div class="user-menu">
+                    <span class="username">{{ name }}</span>
+                    <div class="dropdown">
+                        <a href="#" id="history">History</a>
+                        <a href="#" id="logout">Logout</a>
+                    </div>
                 </div>
                 {% endif %}
                 </div>
