@@ -16,13 +16,13 @@ if __name__ == "__main__":
                 ignore_index=True,
             )
     merged_csv.dropna(inplace=True)
+    merged_csv.reset_index(drop=True)
 
-    # Create a boolean mask: True for rows not containing "http", False for those that do
-    mask = ~merged_csv["pdf_path_or_url"].str.contains("http", na=False)
-    # Filter the DataFrame using the mask, keeping only the True rows
+    mask = ~merged_csv["pdf_path_or_url"].astype(str).str.contains("https", na=False)
     merged_csv = merged_csv[mask]
 
     merged_csv.drop_duplicates(inplace=True)
+    merged_csv.reset_index(drop=True, inplace=True)
 
     merged_csv["snippet"] = ""
     # Add the snippet column to each row of the merged csv
@@ -46,6 +46,6 @@ if __name__ == "__main__":
             if "Headnotes" in line:
                 found = True
 
-        merged_csv.loc[i, "snippet"] = snippet
+        merged_csv.at[i, "snippet"] = snippet
 
     merged_csv.to_csv("merged_scraped_data.csv", index=False)
