@@ -33,26 +33,42 @@
                 {% else %}
                 <div class="header-buttons">
                     <div class="user-menu">
-                    <span class="username">{{ name }}</span>
-                    <div class="dropdown">
-                        <a href="#" id="history">History</a>
-                        <a href="#" id="logout">Logout</a>
+                        <span class="username">{{ name }}</span>
+                        <div class="dropdown">
+                            <a href="#" id="history">History</a>
+                            <a href="#" id="logout">Logout</a>
+                        </div>
                     </div>
-                </div>
-                {% endif %}
+                    {% endif %}
             </header>
             <!---Content-->
             <main class="main-content">
                 <section class="r-section">
-                    <div class="r-header">
+                    <form id="search-form" class="search-form" action="{{ url_for('search_query') }}" method="GET">
+                        <div class="search-input">
+                            <input type="text" id="search-input" name="query"
+                                placeholder="Search using case titles, citations, keywords..." required>
+                            <button type="submit" class="button-r search-button">Search</button>
+                        </div>
+                    </form>
+                    <div class="r-header" style="margin-top: 5%;">
                         <h2>Search Results for "<span id="search-query-display">{{ query }}</span>"</h2>
-                        <a href="{{ url_for('index') }}" class="link">&larr; New Search</a>
-                    </div>
-                    <div id="l-results" class="l-container">
-                        <div class="spinner"></div>
                     </div>
                     <div id="results-list" class="results-list">
-                        <!--Load the results here (search) hehehe.... -->
+                        {% if cases|length == 0 %}
+                        <p>No results found</p>
+                        {% else %}
+                        {% for case in cases %}
+                        <div class="result-item">
+                            <a href="{{ url_for('doc_view', case_id=case.id) }}">
+                                <h3>{{ case.title }}</h3>
+                                <p class="citation">{{ case.citation }} • {{ case.judgment_date }}</p>
+                                <p class="snippet">{{ case.snippet }}</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
                 </section>
             </main>
         </div>
@@ -66,8 +82,10 @@
             </div>
             <form id="auth-form" method="POST">
                 <div class="space-y-4" id="login-form-div">
-                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email" required>
-                    <input type="password" placeholder="Password" class="form-input" name="password" id = "login-pwd" required>
+                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email"
+                        required>
+                    <input type="password" placeholder="Password" class="form-input" name="password" id="login-pwd"
+                        required>
                 </div>
                 <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
                 <p id="mod-switch-text" class="mod-switch-text"> Create An Account Today:
@@ -76,10 +94,6 @@
             </form>
         </div>
     </div>
-    <script>
-  window.results = {{ cases | tojson }};
-</script>
-<script src="../static/js/main.js"></script>
 
 </body>
 
