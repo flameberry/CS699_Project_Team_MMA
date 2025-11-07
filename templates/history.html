@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>LegalToday - Search History</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/layout.css">
+    <link rel="stylesheet" href="../static/css/buttons.css">
+    <link rel="stylesheet" href="../static/css/content.css">
+    <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/results.css">
+    <link rel="stylesheet" href="../static/css/documents.css">
+    <link rel="stylesheet" href="../static/css/user.css">
+    <link rel="stylesheet" href="../static/css/history.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <header class="header">
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
+                {% if not name %}
+                <div class="header-buttons">
+                    <button id="login-but" class="button-l">Login</button>
+                    <button id="register-but" class="button-r">Registration</button>
+                </div>
+                {% else %}
+                <div class="header-buttons">
+                    <div class="user-menu">
+                        <span class="username">{{ name }}</span>
+                        <div class="dropdown">
+                            <a href="{{ url_for('history') }}" id="history">History</a>
+                            <a href="#" id="logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </header>
+
+            <main class="main-content">
+                <section class="r-section">
+                    <div class="r-header">
+                        <h2>Search History</h2>
+                        <a href="{{ url_for('index') }}" class="link">&larr; Back to Home</a>
+                    </div>
+
+                    {% if past_queries %}
+                    <div class="results-list">
+                        <ul class="history-list">
+                            {% for query, created_at in past_queries %}
+                            <li class="history-item">
+                                <form action="{{ url_for('search_query') }}" method="get" class="inline-form">
+                                    <input type="hidden" name="query" value="{{ query }}">
+                                    <button type="submit" class="history-link">{{ query }}</button>
+                                </form>
+                                <span class="timestamp">
+                                    Searched on {{ created_at.strftime("%b %d, %Y at %I:%M %p") if created_at else '' }}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+                    {% else %}
+                    <p class="no-history">No search history found.</p>
+                    {% endif %}
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="auth-mod" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="mod-title" class="text-2xl font-bold">Login</h3>
+                <button id="close-modal-btn" class="close-modal-btn">&times;</button>
+            </div>
+            <form id="auth-form" method="POST">
+                <div class="space-y-4" id="login-form-div">
+                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email"
+                        required>
+                    <input type="password" placeholder="Password" class="form-input" name="password" id="login-pwd"
+                        required>
+                </div>
+                <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
+                <p id="mod-switch-text" class="mod-switch-text">Create An Account Today:
+                    <a href="#" id="mod-switch-link" class="text-blue-500 hover:underline">Register</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="../static/js/main.js"></script>
+</body>
+
+</html>

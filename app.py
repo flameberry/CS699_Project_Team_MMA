@@ -4,6 +4,7 @@ from scraping import scrape_india_kanoon
 import secrets
 import sqlite3
 import bcrypt
+from datetime import datetime
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False     
 app.config["SESSION_TYPE"] = "filesystem" 
@@ -137,14 +138,26 @@ def logout():
     session["login_status"] = False
     return jsonify({"login":session["login_status"]})
 
-@app.route('/history',methods=['GET'])
+@app.route('/history', methods=['GET'])
 def history():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC''',(session["email"],))
-    past_queries = cursor.fetchall()
+    cursor.execute('''SELECT query, created_at FROM history WHERE email=? ORDER BY created_at DESC''', (session["email"],))
+    rows = cursor.fetchall()
     conn.close()
-    return render_template("history.html",past_queries=past_queries,name=session.get("name",None),email=session.get("email",None))
+
+    past_queries = []
+    for query, created_at in rows:
+        if isinstance(created_at, str):
+            try:
+                created_at = datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
+            except:
+                pass
+        past_queries.append((query, created_at))
+
+    return render_template("history.html", past_queries=past_queries, name=session.get("name", None), email=session.get("email", None))
+
+
 
 if __name__ == '__main__':
     conn = get_db_connection()

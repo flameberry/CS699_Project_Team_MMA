@@ -30,39 +30,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // Personal functions for each page
 
     // const handleHomepage = () => {
-        
-    // };
-    const logout= document.getElementById("logout");
-    const history = document.getElementById("history");
 
-    if(logout){
-        logout.addEventListener("click",(e)=>{
+    // };
+    const logout = document.getElementById("logout");
+    const historyBtn = document.getElementById("history");
+
+    if (logout) {
+        logout.addEventListener("click", (e) => {
             e.preventDefault();
             fetch("/logout", { method: "POST" })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.login === false) {
-                alert("Logged out successfully!");
-                // window.location.href = "/"; 
-                location.reload();
-                }
-            })
-            .catch((err) => console.error("Logout failed:", err));
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.login === false) {
+                        alert("Logged out successfully!");
+                        window.location.href = "/"; 
+                        // location.reload();
+                    }
+                })
+                .catch((err) => console.error("Logout failed:", err));
         });
     }
 
-    if(history){
-        logout.addEventListener("click",(e)=>{
-        e.preventDefault();
-        fetch("/history", { method: "POST" })
+    if (historyBtn) {
+        historyBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.location.href = "/history"; 
         });
     }
+
 
 
     const handleSearchResultsPage = async () => {
         const resultsList = document.getElementById('results-list');
         const loadResults = document.getElementById('l-results');
-        if ( !resultsList) return;
+        if (!resultsList) return;
         const results = window.results;
         if (loadResults) loadResults.style.display = 'none';
         resultsList.innerHTML = '';
@@ -128,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 modTitle.textContent = 'Registration';
                 modActionBut.textContent = 'Create Account';
-                loginFormDiv.innerHTML = '<input type="text" placeholder="Name" class="form-input" name="name" id="reg-name" required><input type="date" placeholder="Date Of Birth" class="form-input" name="dob" id = "reg-dob" required>'+loginFormDiv.innerHTML;
+                loginFormDiv.innerHTML = '<input type="text" placeholder="Name" class="form-input" name="name" id="reg-name" required><input type="date" placeholder="Date Of Birth" class="form-input" name="dob" id = "reg-dob" required>' + loginFormDiv.innerHTML;
                 modSwitchText.innerHTML = `Already have an account? <a href="#" id="mod-switch-link" class="link">Login</a>`;
             }
             authMod.style.display = 'flex';
@@ -152,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (authForm) {
             authForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                if(modTitle.textContent === 'Registration'){
+                if (modTitle.textContent === 'Registration') {
                     const email = document.getElementById("login-email").value;
                     const pwd = document.getElementById("login-pwd").value;
                     const name = document.getElementById("reg-name").value;
@@ -160,39 +161,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetch('/register', {
                         method: 'POST',
                         headers: {
-                        'Content-Type': 'application/json'
+                            'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ "email": email, "pwd":pwd, "name":name, "dob":dob })
+                        body: JSON.stringify({ "email": email, "pwd": pwd, "name": name, "dob": dob })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data["registration"]==0){
-                            alert(`${modTitle.textContent} successful`);
-                            openMod(true);
-                        }
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data["registration"] == 0) {
+                                alert(`${modTitle.textContent} successful`);
+                                openMod(true);
+                            }
+                        });
                 }
-                else{
+                else {
                     var email = document.getElementById("login-email").value;
                     var pwd = document.getElementById("login-pwd").value;
                     fetch('/login', {
                         method: 'POST',
                         headers: {
-                        'Content-Type': 'application/json'
+                            'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ "email": email, "pwd":pwd })
+                        body: JSON.stringify({ "email": email, "pwd": pwd })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data["login"]==false){
-                            alert(`${modTitle.textContent} credentials not found`);
-                        }
-                        else{
-                            alert(`${modTitle.textContent} successful`);
-                            closeMod();
-                            location.reload();
-                        }
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data["login"] == false) {
+                                alert(`${modTitle.textContent} credentials not found`);
+                            }
+                            else {
+                                alert(`${modTitle.textContent} successful`);
+                                closeMod();
+                                location.reload();
+                            }
+                        });
                 }
             });
         }

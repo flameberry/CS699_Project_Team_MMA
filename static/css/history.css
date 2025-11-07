@@ -1,0 +1,37 @@
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.history-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.history-link {
+    background: none;
+    border: none;
+    color: #0056b3;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+}
+
+.history-link:hover {
+    text-decoration: underline;
+}
+
+.timestamp {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.2rem;
+}
+
+.no-history {
+    text-align: center;
+    color: #777;
+    margin-top: 2rem;
+}
