@@ -34,3 +34,40 @@
 .search-button {
     border-radius: 0;
 }
+
+.recent-history {
+    margin-top: 15px;
+    padding: 12px;
+    color: black;
+    background-color: #ffffff;   /* White background */
+    border: 1px solid #ddd;      /* Light border */
+    border-radius: 8px;          /* Rounded corners */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* Subtle shadow */
+    display: none;
+    
+}
+
+.recent-history label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
+}
+
+.recent-history ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-item {
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.history-item:hover {
+    background-color: #f5f5f5;   /* Light gray hover effect */
+}

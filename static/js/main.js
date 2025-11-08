@@ -1,6 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const logout = document.getElementById("logout");
     const historyBtn = document.getElementById("history");
+    const searchbar = document.getElementById("search-input");
+
+    if(searchbar){
+        const historyDrop = document.getElementsByClassName("recent-history")[0];
+        if(historyDrop){
+            searchbar.addEventListener("focus", (e) => {
+                historyDrop.style.display = "block";
+            })
+
+            historyDrop.addEventListener("focus", (e) => {
+                historyDrop.style.display = "block";
+            })
+
+            historyDrop.addEventListener("blur",(e) => {
+                historyDrop.style.display = "none";
+            })
+            document.querySelectorAll(".history-item").forEach(item => {
+            item.addEventListener("click",(e) => {
+                searchbar.value = item.textContent;
+                historyDrop.style.display = "none";
+            })
+        });
+        }
+    }
 
     if (logout) {
         logout.addEventListener("click", (e) => {

@@ -46,11 +46,20 @@
                 <section class="r-section">
                     <form id="search-form" class="search-form" action="{{ url_for('search_query') }}" method="GET">
                         <div class="search-input">
-                            <input type="text" id="search-input" name="query"
+                            <input type="text" id="search-input" name="query" autocomplete="off"
                                 placeholder="Search using case titles, citations, keywords..." required>
                             <button type="submit" class="button-r search-button">Search</button>
                         </div>
                     </form>
+                    {% if past_queries %}
+                    <div class="recent-history">
+                    <ul>
+                        {% for item in past_queries %}
+                        <li class="history-item">{{ item[0] }}</li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+                    {% endif %}
                     <div class="r-header" style="margin-top: 5%;">
                         <h2>Search Results for "<span id="search-query-display">{{ query }}</span>"</h2>
                     </div>

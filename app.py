@@ -18,6 +18,7 @@ def get_db_connection():
 def index():
     email = None
     name = None
+    past_queries = None
     past_queries=[]
     if session.get("login_status") is None:
         session["login_status"] = False
@@ -28,7 +29,7 @@ def index():
     if session["login_status"]:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC''',(session["email"],))
+        cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 5''',(session["email"],))
         past_queries = cursor.fetchall()
         conn.close()
 
@@ -41,10 +42,10 @@ def search_query():
         conn = get_db_connection()
         cursor = conn.cursor()
         if session["login_status"]:
-            cursor.execute('''SELECT query FROM history ORDER BY created_at DESC LIMIT 1''')
+            cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 1''',(session["email"],))
             top_query = cursor.fetchone()
             if top_query and len(top_query)>0 and top_query[0]==query:
-                cursor.execute("UPDATE history SET created_at = CURRENT_TIMESTAMP where id = ( SELECT id FROM history ORDER BY created_at DESC LIMIT 1)")
+                cursor.execute("UPDATE history SET created_at = CURRENT_TIMESTAMP where id = ( SELECT id FROM history WHERE email=? ORDER BY created_at DESC LIMIT 1)",(session["email"],))
             else:
                 cursor.execute('''INSERT INTO history (email,query) VALUES (?,?)''',(session["email"],query))
             conn.commit()
@@ -60,8 +61,12 @@ def search_query():
                 "snippet":row[4]
             } for row in cursor.fetchall()
         ]
+        past_queries = None
+        if session["login_status"]:
+            cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 5''',(session["email"],))
+            past_queries = cursor.fetchall()
         conn.close()
-        return render_template('search-result.html',query=query,cases=cases,login_status=session.get("login_status",False),name=session.get("name",None))
+        return render_template('search-result.html',query=query,cases=cases,past_queries=past_queries,login_status=session.get("login_status",False),name=session.get("name",None))
     
 @app.route('/doc-view/<case_id>',methods=["GET","POST"])
 def doc_view(case_id):

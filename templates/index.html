@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
     <link rel="stylesheet" href="../static/css/layout.css">
     <link rel="stylesheet" href="../static/css/buttons.css">
     <link rel="stylesheet" href="../static/css/content.css">
@@ -52,11 +52,21 @@
                     </div>
                     <form id="search-form" class="search-form" action="{{ url_for('search_query') }}" method="GET">
                         <div class="search-input">
-                            <input type="text" id="search-input" name="query"
+                            <input type="text" id="search-input" name="query" autocomplete="off"
                                 placeholder="Search using case titles, citations, keywords..." required>
                             <button type="submit" class="button-r search-button">Search</button>
                         </div>
                     </form>
+                    {% if past_queries %}
+                    <div class="recent-history">
+                    <ul>
+                        {% for item in past_queries %}
+                        <li class="history-item">{{ item[0] }}</li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+                    {% endif %}
+                    </div>
                 </section>
             </main>
         </div>
