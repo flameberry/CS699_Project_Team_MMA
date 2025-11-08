@@ -1,6 +1,5 @@
 flask
 requests
-sqlite3
 bcrypt
 pandas
 bs4
