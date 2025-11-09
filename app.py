@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 from flask_session import Session
-from scraping import scrape_india_kanoon
+# from scraping import scrape_india_kanoon
+import pandas as pd
 import secrets
 import sqlite3
 import bcrypt
@@ -50,15 +51,16 @@ def search_query():
                 cursor.execute('''INSERT INTO history (email,query) VALUES (?,?)''',(session["email"],query))
             conn.commit()
         cursor.execute('''
-        select id,case_title,citation,judgement_date,snippet from cases where case_title LIKE ? or citation LIKE ? or snippet LIKE ?
+        select id,case_id,case_title,citation,judgement_date,snippet from cases where case_title LIKE ? or citation LIKE ? or snippet LIKE ?
         ''',(f"%{query}%", f"%{query}%", f"%{query}%"))
         cases=[
             {
                 "id":row[0],
-                "title":row[1],
-                "citation":row[2],
-                "judgment_date":row[3],
-                "snippet":row[4]
+                "case_id":row[1],
+                "title":row[2],
+                "citation":row[3],
+                "judgment_date":row[4],
+                "snippet":row[5]
             } for row in cursor.fetchall()
         ]
         past_queries = None
@@ -68,23 +70,24 @@ def search_query():
         conn.close()
         return render_template('search-result.html',query=query,cases=cases,past_queries=past_queries,login_status=session.get("login_status",False),name=session.get("name",None))
     
-@app.route('/doc-view/<case_id>',methods=["GET","POST"])
-def doc_view(case_id):
+@app.route('/doc_view/<id>',methods=["GET","POST"])
+def doc_view(id):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-    select case_title, citation, judgement_date, judges, full_text from cases where id = ?''',(case_id,))
+    select case_id, case_title, citation, judgement_date, judges, pdf_path from cases where id = ?''',(id,))
     case_data = cursor.fetchone()
     conn.close()
     if not case_data:
         return "Document not found", 404
     data={
-            "id":case_id,
-            "title":case_data[0],
-            "citation":case_data[1],
-            "judgement_date":case_data[2],
-            "judges": case_data[3].split(','),
-            "full_text": case_data[4]
+            "id":id,
+            "case_id":case_data[0],
+            "title":case_data[1],
+            "citation":case_data[2],
+            "judgement_date":case_data[3],
+            "judges": case_data[4].replace("Coram : ","").split(','),
+            "pdf_path": "../"+case_data[5]
         }
     return render_template(
         "Doc_view_page.html",
@@ -92,6 +95,10 @@ def doc_view(case_id):
         login_status=session.get("login_status",False),
         name=session.get("name", None)
     )
+
+@app.route('/pdfs/<filename>')
+def serve_pdf(filename):
+    return send_from_directory('static/pdfs', filename)
 
 @app.route('/login',methods=["GET","POST"])
 def login():
@@ -177,13 +184,15 @@ if __name__ == '__main__':
     ''')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS cases (
-    id TEXT PRIMARY KEY ,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     case_title TEXT NOT NULL,
     citation TEXT,
-    judgement_date TEXT,
     judges TEXT,
-    snippet TEXT,
-    full_text TEXT
+    judgement_date TEXT,
+    case_id TEXT,
+    bench TEXT,
+    pdf_path TEXT,
+    snippet TEXT
     )
     ''')
     cursor.execute('''
@@ -195,28 +204,16 @@ if __name__ == '__main__':
     )
     ''')
     conn.commit()
-    sample_cases = [
-        ("doc001", "Union of India Vs. M/s G.S. Chatha Rice Mills", "Civil Appeal No(s). 2176 of 2021", "2021-03-10",
-         "Hon'ble Mr. Justice D.Y. Chandrachud,Hon'ble Mr. Justice M.R. Shah",
-         "The core issue revolves around the interpretation of customs tariffs...",
-         "<p>The present appeal arises from a judgment...</p>"),
-        ("doc002", "State of Punjab vs. Principal Secretary to the Governor", "Writ Petition (Civil) No. 1224 of 2023", "2023-11-10",
-         "Hon'ble Chief Justice D.Y. Chandrachud,Hon'ble Mr. Justice J.B. Pardiwala",
-         "This case addresses the constitutional powers of the Governor...",
-         "<p>This is a significant case concerning the constitutional relationship...</p>"),
-        ("doc003", "Competition Commission of India vs. Google LLC", "Civil Appeal No. 54 of 2023", "2023-04-19",
-         "Hon'ble Chief Justice D.Y. Chandrachud,Hon'ble Mr. Justice P.S. Narasimha",
-         "Examining the allegations of abuse of dominant position by Google...",
-         "<p>This landmark case tests the application of Indian competition law...</p>")
-    ]
+    cursor.execute('''SELECT * FROM cases''')
+    if len(cursor.fetchall())==0:
+        df = pd.read_csv("merged_scraped_data.csv")
+        for row_dict in df.to_dict(orient='records'):
+            cursor.execute('''INSERT INTO cases (
+                           case_title, citation, judges,
+                            judgement_date, case_id, 
+                           bench, pdf_path, snippet)
+                           VALUES (?,?,?,?,?,?,?,?)''',(row_dict["title"],row_dict["citation"],row_dict["coram"],row_dict["decision_date"],row_dict["case_no"],row_dict["bench"],row_dict["pdf_path_or_url"],row_dict["snippet"]))
 
-    for c in sample_cases:
-        cursor.execute("Select id from cases where id=?",(c[0],))
-        if cursor.fetchone() is None:
-            cursor.execute('''
-            insert into cases (id,case_title,citation,judgement_date,judges,snippet,full_text)
-            values (?,?,?,?,?,?,?)       
-            ''',c)
     conn.commit()
     conn.close()
     app.run(debug=True)

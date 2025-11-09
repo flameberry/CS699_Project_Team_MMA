@@ -69,9 +69,9 @@
                         {% else %}
                         {% for case in cases %}
                         <div class="result-item">
-                            <a href="{{ url_for('doc_view', case_id=case.id) }}">
+                            <a href="{{ url_for('doc_view', id=case.id) }}">
                                 <h3>{{ case.title }}</h3>
-                                <p class="citation">{{ case.citation }} • {{ case.judgment_date }}</p>
+                                <p class="citation">{{ case.case_id }} • {{ case.citation }} • {{ case.judgment_date }}</p>
                                 <p class="snippet">{{ case.snippet }}</p>
                             </a>
                         </div>
