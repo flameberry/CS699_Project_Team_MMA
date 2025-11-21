@@ -50,7 +50,7 @@
                         <p>Access a vast database of legal judgements from Supreme Court and access summarised views and
                             search over them</p>
                     </div>
-                    <form id="search-form" class="search-form" action="{{ url_for('search_query') }}" method="GET">
+                    <form id="search-form" class="search-form" action="{{ url_for('search_query',page_num=1) }}" method="GET">
                         <div class="search-input">
                             <input type="text" id="search-input" name="query" autocomplete="off"
                                 placeholder="Search using case titles, citations, keywords..." required>

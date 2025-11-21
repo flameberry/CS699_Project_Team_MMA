@@ -55,7 +55,7 @@
                         <ul class="history-list">
                             {% for query, created_at in past_queries %}
                             <li class="history-item">
-                                <form action="{{ url_for('search_query') }}" method="get" class="inline-form">
+                                <form action="{{ url_for('search_query',page_num=1) }}" method="get" class="inline-form">
                                     <input type="hidden" name="query" value="{{ query }}">
                                     <button type="submit" class="history-link">{{ query }}</button>
                                 </form>

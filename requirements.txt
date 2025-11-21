@@ -4,3 +4,6 @@ bcrypt
 pandas
 bs4
 flask-session
+google-generativeai
+dotenv
+numpy

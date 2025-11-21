@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
             searchbar.addEventListener("focus", (e) => {
                 historyDrop.style.display = "block";
             })
+            
+            searchbar.addEventListener("blur", (e) => {
+                historyDrop.style.display = "block";
+            })
 
             historyDrop.addEventListener("focus", (e) => {
                 historyDrop.style.display = "block";
@@ -148,3 +152,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     handleAuthMod();
 });
+
+
+function toggleSnippet(button) {
+    const snippet = button.parentElement.querySelector('.snippet');
+    if (snippet.classList.contains('hidden')) {
+        snippet.classList.remove('hidden');
+        button.textContent = "Hide Summary";
+    } else {
+        snippet.classList.add('hidden');
+        button.textContent = "Show Summary";
+    }
+}

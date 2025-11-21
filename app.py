@@ -17,15 +17,15 @@ load_dotenv()
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False     
 app.config["SESSION_TYPE"] = "filesystem" 
-app.secret_key = "dev-key-change-in-prod"
+app.secret_key = secrets.token_hex(32)
 Session(app)
 
-api_key = os.getenv("GEMINI_API_KEY")
+api_keys = [os.getenv("GEMINI_API_KEY1"),os.getenv("GEMINI_API_KEY2"),os.getenv("GEMINI_API_KEY3")]
 
-if not api_key:
-    print("WARNING: GEMINI_API_KEY not found in .env file. AI features will fail.")
-
-genai.configure(api_key=api_key)
+n_apis = len(api_keys)
+genai.configure(api_key=api_keys[0])
+if not api_keys[0] or not api_keys[1] or not api_keys[2]:
+    print("WARNING: GEMINI_API_KEY1 or GEMINI_API_KEY2 not found in .env file. AI features will fail.")
 
 MODEL_NAME = "gemini-flash-latest"
 EMBEDDING_MODEL = "models/text-embedding-004"
@@ -50,8 +50,9 @@ def get_embedding(text):
         print(f"Embedding Error: {e}")
         return []
 
-def generate_summary(text, query):
+def generate_summary(text, query, api_key):
     try:
+        genai.configure(api_key=api_key)
         model = genai.GenerativeModel(MODEL_NAME)
         prompt = f"""
         You are a legal assistant. Summarize the following legal case snippet in 2 sentences, 
@@ -74,14 +75,14 @@ def index():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 5''',(email,))
-        past_queries = [row['query'] for row in cursor.fetchall()]
+        past_queries = [row for row in cursor.fetchall()]
         conn.close()
     return render_template("index.html", login_status=session.get("login_status", False), name=name, email=email, past_queries=past_queries)
 
-@app.route('/search_query', methods=["GET", "POST"])
-def search_query():
+@app.route('/search_query/<int:page_num>', methods=["GET", "POST"])
+def search_query(page_num):
     if request.method == "GET":
-        query = request.args.get("query", "")
+        query = request.args.get("query",'')
         past_queries = []
         
         conn = get_db_connection()
@@ -96,7 +97,7 @@ def search_query():
                 cursor.execute('''INSERT INTO history (email, query) VALUES (?, ?)''', (email, query))
             conn.commit()
             cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 5''', (email,))
-            past_queries = [row['query'] for row in cursor.fetchall()]
+            past_queries = [row for row in cursor.fetchall()]
         try:
             query_res = genai.embed_content(
                 model=EMBEDDING_MODEL,
@@ -129,22 +130,23 @@ def search_query():
                 scores = np.dot(doc_matrix, q_vec) / norms
                 results = list(zip(scores, valid_rows))
                 results.sort(key=lambda x: x[0], reverse=True)
-                top_results = results[:20]
+                top_results = results
+                print(len(top_results))
 
         except Exception as e:
             print(f"Search Error: {e}")
             top_results = []
-
-        ai_batch = top_results[:5]
-        static_batch = top_results[5:]
+        page_nums = (page_num,int(np.ceil(len(top_results)/10)))
+        ai_batch = top_results[(page_num-1)*10:page_num*10]
+        # static_batch = top_results[5:]
         
         ai_results_fixed = [None] * len(ai_batch)
-        final_static_results = []
+        # final_static_results = []
 
-        def process_ai_item(data):
+        def process_ai_item(data, api_key):
             index, item = data
             score, row = item
-            summary = generate_summary(row['snippet'], query)
+            summary = generate_summary(row['snippet'], query, api_key)
             return index, {
                 "id": row['id'],
                 "case_id": row['case_id'],
@@ -154,9 +156,9 @@ def search_query():
                 "judgement_date": row['judgement_date'],
                 "snippet": summary
             }
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             future_to_idx = {
-                executor.submit(process_ai_item, (i, item)): i 
+                executor.submit(process_ai_item, (i, item, api_keys[i%n_apis])): i 
                 for i, item in enumerate(ai_batch)
             }
             
@@ -176,21 +178,20 @@ def search_query():
                         "judgement_date": orig_row['judgement_date'],
                         "snippet": orig_row['snippet']
                     }
-        for score, row in static_batch:
-            final_static_results.append({
-                "id": row['id'],
-                "case_id": row['case_id'],
-                "case_title": row['case_title'],
-                "title": row['case_title'],
-                "citation": row['citation'],
-                "judgement_date": row['judgement_date'],
-                "snippet": row['snippet']
-            })
+        # for score, row in static_batch:
+        #     final_static_results.append({
+        #         "id": row['id'],
+        #         "case_id": row['case_id'],
+        #         "case_title": row['case_title'],
+        #         "title": row['case_title'],
+        #         "citation": row['citation'],
+        #         "judgement_date": row['judgement_date'],
+        #         "snippet": row['snippet']
+        #     })
 
-        final_cases = [x for x in ai_results_fixed if x is not None] + final_static_results
-
+        final_cases = [x for x in ai_results_fixed if x is not None]
         conn.close()
-        return render_template('search-result.html', query=query, cases=final_cases, past_queries=past_queries, login_status=session.get("login_status", False), name=session.get("name"))
+        return render_template('search-result.html', query=query, cases=final_cases, past_queries=past_queries, page_nums=page_nums, login_status=session.get("login_status", False), name=session.get("name"))
 
 @app.route('/doc_view/<id>')
 def doc_view(id):
@@ -246,7 +247,7 @@ def register():
     conn.close()
     return jsonify({"registration": res})
 
-@app.route('/logout')
+@app.route('/logout', methods=["POST"])
 def logout():
     session.clear()
     return jsonify({"login": False})

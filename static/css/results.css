@@ -67,3 +67,86 @@
 .result-item .snippet {
     margin-top: 0.5rem;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.pagination-list {
+    list-style: none;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination-list li {
+    display: inline;
+}
+
+.pagination-list a,
+.pagination-list span {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary);
+    background-color: var(--color-surface-light);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-list a:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.pagination-list .active span {
+    background-color: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+    .pagination-list a,
+    .pagination-list span {
+        background-color: var(--color-surface-dark);
+        color: var(--color-primary);
+    }
+
+    .pagination-list a:hover {
+        background-color: var(--color-primary);
+        color: #fff;
+    }
+
+    .pagination-list .active span {
+        background-color: var(--color-primary);
+        color: #fff;
+    }
+}
+
+
+.hidden {
+    display: none;
+}
+
+.show-hide-btn {
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 0.375rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.show-hide-btn:hover {
+    background-color: #333;
+}
