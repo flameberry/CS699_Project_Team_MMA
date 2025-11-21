@@ -7,3 +7,4 @@ flask-session
 google-generativeai
 dotenv
 numpy
+sqlite3
