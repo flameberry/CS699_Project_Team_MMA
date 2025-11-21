@@ -41,8 +41,8 @@ body {
 
     .form-input {
         background-color: var(--color-border-dark);
-        border-color: #475569;
-        color: var(--color-text-light);
+        border-color: #cbcfd4;
+        color: var(--color-text-dark);
     }
 
     .logo span {

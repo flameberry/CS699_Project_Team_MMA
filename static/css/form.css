@@ -29,6 +29,13 @@
     outline: none;
     font-size: 1rem;
     background: transparent;
+    color: var(--color-text-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+    .search-input input {
+        color: var(--color-text-light); 
+    }
 }
 
 .search-button {

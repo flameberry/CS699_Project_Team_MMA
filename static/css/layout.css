@@ -38,6 +38,13 @@
     color: var(--color-text-dark);
 }
 
+@media (prefers-color-scheme: dark) {
+    .logo span {
+        color: var(--color-text-light); 
+    }
+}
+
+
 .header-buttons {
     display: flex;
     gap: 0.5rem;
