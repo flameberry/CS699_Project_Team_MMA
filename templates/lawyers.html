@@ -20,54 +20,137 @@
         /* Specific styles for lawyer cards */
         .lawyer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            padding: 24px 0;
         }
         .lawyer-card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 16px;
+            background-color: var(--color-surface-light);
+            border: 1px solid var(--color-border-light);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            transition: box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .lawyer-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            border-color: var(--color-primary);
         }
+        
+        @media (prefers-color-scheme: dark) {
+            .lawyer-card {
+                background-color: var(--color-surface-dark);
+                border-color: var(--color-border-dark);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            .lawyer-card:hover {
+                box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+                border-color: var(--color-primary);
+            }
+        }
+
         .lawyer-header {
             display: flex;
-            align-items: center;
-            margin-bottom: 12px;
+            align-items: start;
+            margin-bottom: 16px;
+            gap: 16px;
         }
         .lawyer-img {
-            width: 60px;
-            height: 60px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 12px;
-            background-color: #f0f0f0;
+            background-color: var(--color-border-light);
+            border: 2px solid var(--color-bg-light);
+            flex-shrink: 0;
         }
+        @media (prefers-color-scheme: dark) {
+            .lawyer-img {
+                background-color: var(--color-border-dark);
+                border-color: var(--color-bg-dark);
+            }
+        }
+
+        .lawyer-info {
+            flex: 1;
+            min-width: 0; /* Fix text overflow in flex child */
+        }
+
         .lawyer-info h3 {
-            margin: 0 0 4px 0;
-            font-size: 1.1rem;
-            color: #333;
+            margin: 0 0 6px 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--color-text-dark);
+            line-height: 1.3;
         }
-        .lawyer-info p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #666;
+        @media (prefers-color-scheme: dark) {
+            .lawyer-info h3 {
+                color: var(--color-text-light);
+            }
         }
-        .lawyer-details {
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 12px;
-            flex-grow: 1;
-        }
-        .lawyer-details div {
+
+        .specialization-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            color: var(--color-primary);
+            background-color: rgba(59, 130, 246, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
             margin-bottom: 4px;
         }
+        
+        .lawyer-details {
+            font-size: 0.9rem;
+            color: var(--color-muted-light);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        @media (prefers-color-scheme: dark) {
+            .lawyer-details {
+                color: var(--color-muted-dark);
+            }
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .detail-icon {
+            opacity: 0.7;
+        }
+
+        /* Truncation Logic */
+        .practice-areas {
+            position: relative;
+            max-height: 3.6em; /* approx 3 lines */
+            overflow: hidden;
+            line-height: 1.4;
+            margin-top: 8px;
+        }
+        .practice-areas.expanded {
+            max-height: none;
+        }
+        .see-more {
+            font-size: 0.8rem;
+            color: var(--color-primary);
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 4px;
+            background: none;
+            border: none;
+            padding: 0;
+            text-decoration: underline;
+        }
+        .see-more:hover {
+            text-decoration: none;
+        }
+
         .lawyer-action {
             margin-top: auto;
             width: 100%;
@@ -78,22 +161,57 @@
              display: block;
              text-decoration: none;
              box-sizing: border-box;
+             padding: 10px;
+             border-radius: 8px;
+             font-weight: 600;
         }
+
         .filter-bar {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
+            gap: 12px;
+            margin-bottom: 32px;
+            background: var(--color-surface-light);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border-light);
+            align-items: center;
+            flex-wrap: wrap;
         }
+        @media (prefers-color-scheme: dark) {
+            .filter-bar {
+                background: var(--color-surface-dark);
+                border-color: var(--color-border-dark);
+            }
+        }
+
         .filter-input {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            min-width: 200px;
+            padding: 12px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 8px;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-dark);
+            font-family: inherit;
+        }
+        @media (prefers-color-scheme: dark) {
+            .filter-input {
+                border-color: var(--color-border-dark);
+                background-color: var(--color-bg-dark);
+                color: var(--color-text-light);
+            }
+            .filter-input::placeholder {
+                color: var(--color-muted-dark);
+            }
         }
     </style>
+    <script>
+        function togglePractice(btn) {
+            const container = btn.previousElementSibling;
+            container.classList.toggle('expanded');
+            btn.textContent = container.classList.contains('expanded') ? 'See Less' : 'See More';
+        }
+    </script>
 </head>
 
 <body>
@@ -122,12 +240,12 @@
             
             <main class="main-content">
                 <div class="results-container">
-                    <h2>Find Expert Lawyers</h2>
+                    <h2 style="margin-bottom: 1.5rem;">Find Expert Lawyers</h2>
                     
                     <form class="filter-bar" action="{{ url_for('lawyers') }}" method="GET">
                         <input type="text" name="query" class="filter-input" placeholder="Search by name or specialization..." value="{{ query }}">
                         <input type="text" name="city" class="filter-input" placeholder="City..." value="{{ city }}">
-                        <button type="submit" class="button-r">Filter</button>
+                        <button type="submit" class="button-r" style="padding: 12px 24px;">Filter</button>
                     </form>
 
                     {% if lawyers %}
@@ -135,23 +253,29 @@
                         {% for lawyer in lawyers %}
                         <div class="lawyer-card">
                             <div class="lawyer-header">
-                                <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" class="lawyer-img" onerror="this.src='https://via.placeholder.com/60'">
+                                <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" class="lawyer-img" onerror="this.src='https://via.placeholder.com/72'">
                                 <div class="lawyer-info">
                                     <h3>{{ lawyer['name'] }}</h3>
-                                    <p>{{ lawyer['specialization'] }}</p>
+                                    {% if lawyer['rating'] != 'N/A' %}
+                                    <div class="detail-row" style="color: #f59e0b; font-weight: 600; font-size: 0.9rem;">
+                                        <span>★ {{ lawyer['rating'] }}</span>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="lawyer-details">
-                                <div><strong>Location:</strong> {{ lawyer['city'] }}, {{ lawyer['state'] }}</div>
+                                <div class="detail-row">📍 {{ lawyer['city'] }}, {{ lawyer['state'] }}</div>
                                 {% if lawyer['experience'] != 'N/A' %}
-                                <div><strong>Experience:</strong> {{ lawyer['experience'] }}</div>
+                                <div class="detail-row">⚖️ {{ lawyer['experience'] }} Experience</div>
                                 {% endif %}
-                                {% if lawyer['rating'] != 'N/A' %}
-                                <div><strong>Rating:</strong> {{ lawyer['rating'] }}</div>
-                                {% endif %}
+                                
+                                <div class="practice-areas">
+                                    <strong>Practice:</strong> {{ lawyer['specialization'] }}
+                                </div>
+                                <button class="see-more" onclick="togglePractice(this)">See More</button>
                             </div>
                             <div class="lawyer-action">
-                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="width: 100%; text-align: center; display: block; text-decoration: none;">View Profile</a>
+                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l">View Profile</a>
                             </div>
                         </div>
                         {% endfor %}

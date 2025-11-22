@@ -16,7 +16,102 @@
     <link rel="stylesheet" href="../static/css/auth.css">
     <link rel="stylesheet" href="../static/css/results.css">
     <link rel="stylesheet" href="../static/css/documents.css">
-    <link rel="stylesheet" href="../static/css/user.css">
+    <style>
+        /* Reusing improved lawyer card styles */
+        .lawyer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 10px 0;
+        }
+        .lawyer-card {
+            background-color: var(--color-surface-light);
+            border: 1px solid var(--color-border-light);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .lawyer-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        @media (prefers-color-scheme: dark) {
+            .lawyer-card {
+                background-color: var(--color-surface-dark);
+                border-color: var(--color-border-dark);
+            }
+        }
+        
+        .lawyer-header {
+            display: flex;
+            align-items: start;
+            margin-bottom: 10px;
+            gap: 12px;
+        }
+        .lawyer-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: var(--color-border-light);
+        }
+        
+        .lawyer-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 1rem;
+            color: var(--color-text-dark);
+        }
+        @media (prefers-color-scheme: dark) {
+            .lawyer-info h4 {
+                color: var(--color-text-light);
+            }
+        }
+        
+        .practice-areas-sm {
+            font-size: 0.85rem;
+            color: var(--color-muted-light);
+            margin-bottom: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Truncate to 2 lines */
+            -webkit-box-orient: vertical;
+            flex-grow: 1;
+        }
+        @media (prefers-color-scheme: dark) {
+            .practice-areas-sm {
+                color: var(--color-muted-dark);
+            }
+        }
+        
+        .suggested-lawyers-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: rgba(59, 130, 246, 0.05); /* faint blue tint */
+            border-radius: 12px;
+            border: 1px solid var(--color-border-light);
+        }
+        @media (prefers-color-scheme: dark) {
+            .suggested-lawyers-section {
+                background-color: rgba(30, 41, 59, 0.5);
+                border-color: var(--color-border-dark);
+            }
+        }
+        
+        .section-title {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--color-text-dark);
+            font-weight: 600;
+        }
+        @media (prefers-color-scheme: dark) {
+            .section-title {
+                color: var(--color-text-light);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -62,24 +157,24 @@
                     {% endif %}
                     
                     {% if suggested_lawyers %}
-                    <div class="suggested-lawyers-section" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
-                        <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #333;">Recommended Experts</h3>
-                        <div class="lawyer-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                    <div class="suggested-lawyers-section">
+                        <h3 class="section-title">Recommended Experts for your Case</h3>
+                        <div class="lawyer-grid">
                             {% for lawyer in suggested_lawyers %}
-                            <div class="lawyer-card" style="background: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; display: flex; flex-direction: column;">
-                                <div class="lawyer-header" style="display: flex; align-items: center; margin-bottom: 8px;">
-                                    <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/40'">
-                                    <div>
-                                        <h4 style="margin: 0; font-size: 0.95rem;">{{ lawyer['name'] }}</h4>
+                            <div class="lawyer-card">
+                                <div class="lawyer-header">
+                                    <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" class="lawyer-img" onerror="this.src='https://via.placeholder.com/50'">
+                                    <div class="lawyer-info">
+                                        <h4>{{ lawyer['name'] }}</h4>
                                         <div style="font-size: 0.8rem; color: #f59e0b; font-weight: bold;">
-                                            {% if lawyer['rating'] != 'N/A' %} {{ lawyer['rating'] }} ★ {% endif %}
+                                            {% if lawyer['rating'] != 'N/A' %} ★ {{ lawyer['rating'] }} {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                                <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px; line-height: 1.3;">
+                                <div class="practice-areas-sm">
                                     {{ lawyer['specialization'] }}
-                                </p>
-                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="font-size: 0.8rem; padding: 6px; width: 100%; display: block; text-align: center; box-sizing: border-box; text-decoration: none; margin-top: auto;">View Profile</a>
+                                </div>
+                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="font-size: 0.85rem; padding: 8px; width: 100%; display: block; text-align: center; box-sizing: border-box; text-decoration: none; margin-top: auto; border-radius: 6px;">View Profile</a>
                             </div>
                             {% endfor %}
                         </div>
