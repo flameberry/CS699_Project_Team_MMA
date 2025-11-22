@@ -134,4 +134,4 @@ def scrape_lawyers(max_pages=5):
     print(f"Scraping complete. Saved {len(df)} lawyers to {OUTPUT_FILE}")
 
 if __name__ == "__main__":
-    scrape_lawyers(max_pages=2) # Keeping it small for demo (2 pages ~ 20 lawyers)
+    scrape_lawyers(max_pages=5)
