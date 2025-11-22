@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="../static/css/results.css">
     <link rel="stylesheet" href="../static/css/documents.css">
     <style>
-        /* Reusing improved lawyer card styles */
         .lawyer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -25,29 +24,26 @@
             padding: 10px 0;
         }
         .lawyer-card {
-            background-color: var(--color-surface-light);
-            border: 1px solid var(--color-border-light);
-            border-radius: 10px;
-            padding: 15px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .lawyer-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-        @media (prefers-color-scheme: dark) {
-            .lawyer-card {
-                background-color: var(--color-surface-dark);
-                border-color: var(--color-border-dark);
-            }
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(31, 38, 135, 0.15);
         }
         
         .lawyer-header {
             display: flex;
             align-items: start;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             gap: 12px;
         }
         .lawyer-img {
@@ -55,61 +51,44 @@
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: var(--color-border-light);
+            border: 2px solid rgba(255,255,255,0.8);
         }
         
         .lawyer-info h4 {
             margin: 0 0 4px 0;
             font-size: 1rem;
-            color: var(--color-text-dark);
-        }
-        @media (prefers-color-scheme: dark) {
-            .lawyer-info h4 {
-                color: var(--color-text-light);
-            }
+            color: var(--color-text-main);
+            font-weight: 700;
         }
         
         .practice-areas-sm {
             font-size: 0.85rem;
-            color: var(--color-muted-light);
-            margin-bottom: 10px;
+            color: var(--color-text-muted);
+            margin-bottom: 15px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 2; /* Truncate to 2 lines */
             -webkit-box-orient: vertical;
             flex-grow: 1;
-        }
-        @media (prefers-color-scheme: dark) {
-            .practice-areas-sm {
-                color: var(--color-muted-dark);
-            }
+            line-height: 1.5;
         }
         
         .suggested-lawyers-section {
             margin-top: 2rem;
             padding: 1.5rem;
-            background-color: rgba(59, 130, 246, 0.05); /* faint blue tint */
-            border-radius: 12px;
-            border: 1px solid var(--color-border-light);
-        }
-        @media (prefers-color-scheme: dark) {
-            .suggested-lawyers-section {
-                background-color: rgba(30, 41, 59, 0.5);
-                border-color: var(--color-border-dark);
-            }
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            margin-bottom: 2rem;
         }
         
         .section-title {
             margin-bottom: 1rem;
-            font-size: 1.2rem;
-            color: var(--color-text-dark);
-            font-weight: 600;
-        }
-        @media (prefers-color-scheme: dark) {
-            .section-title {
-                color: var(--color-text-light);
-            }
+            font-size: 1.25rem;
+            color: var(--color-text-main);
+            font-weight: 700;
         }
     </style>
 </head>
@@ -148,11 +127,16 @@
                     </form>
                     {% if past_queries %}
                     <div class="recent-history">
-                    <ul>
-                        {% for item in past_queries %}
-                        <li class="history-item">{{ item[0] }}</li>
-                        {% endfor %}
-                    </ul>
+                        <h3 style="font-size: 1rem; color: var(--color-text-muted); margin-bottom: 10px; text-align: left; padding-left: 10px;">Recent Searches:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px;">
+                            {% for item in past_queries %}
+                            <li>
+                                <a href="#" class="recent-query-link" data-query="{{ item[0] }}">
+                                    {{ item[0] }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
                     {% endif %}
                     
@@ -166,7 +150,7 @@
                                     <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" class="lawyer-img" onerror="this.src='https://via.placeholder.com/50'">
                                     <div class="lawyer-info">
                                         <h4>{{ lawyer['name'] }}</h4>
-                                        <div style="font-size: 0.8rem; color: #f59e0b; font-weight: bold;">
+                                        <div style="font-size: 0.85rem; color: #b45309; font-weight: 600;">
                                             {% if lawyer['rating'] != 'N/A' %} ★ {{ lawyer['rating'] }} {% endif %}
                                         </div>
                                     </div>
@@ -174,14 +158,14 @@
                                 <div class="practice-areas-sm">
                                     {{ lawyer['specialization'] }}
                                 </div>
-                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="font-size: 0.85rem; padding: 8px; width: 100%; display: block; text-align: center; box-sizing: border-box; text-decoration: none; margin-top: auto; border-radius: 6px;">View Profile</a>
+                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="font-size: 0.85rem; padding: 8px; width: 100%; display: block; text-align: center; box-sizing: border-box; text-decoration: none; margin-top: auto; border-radius: 8px;">View Profile</a>
                             </div>
                             {% endfor %}
                         </div>
                     </div>
                     {% endif %}
 
-                    <div class="r-header" style="margin-top: 3%;">
+                    <div class="r-header" style="margin-top: 1rem;">
                         <h2>Search Results for "<span id="search-query-display">{{ query }}</span>"</h2>
                     </div>
                     <div class="pagination">
@@ -205,7 +189,7 @@
                     </div>
                     <div id="results-list" class="results-list">
                         {% if cases|length == 0 %}
-                        <p>No results found</p>
+                        <p style="text-align:center; font-size:1.1rem; color:var(--color-text-muted);">No results found</p>
                         {% else %}
                         {% for case in cases %}
                         <div class="result-item">
@@ -227,19 +211,19 @@
     <div id="auth-mod" class="modal-backdrop">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="mod-title" class="text-2xl font-bold">Login</h3>
+                <h3 id="mod-title" style="font-weight: 700;">Login</h3>
                 <button id="close-modal-btn" class="close-modal-btn">&times;</button>
             </div>
             <form id="auth-form" method="POST">
                 <div class="space-y-4" id="login-form-div">
                     <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email"
-                        required>
+                        required style="width: 100%; box-sizing: border-box;">
                     <input type="password" placeholder="Password" class="form-input" name="password" id="login-pwd"
-                        required>
+                        required style="width: 100%; box-sizing: border-box;">
                 </div>
                 <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
                 <p id="mod-switch-text" class="mod-switch-text"> Create An Account Today:
-                    <a href="#" id="mod-switch-link" class="text-blue-500 hover:underline">Register</a>
+                    <a href="#" id="mod-switch-link" style="color: var(--color-primary); font-weight: 600;">Register</a>
                 </p>
             </form>
         </div>

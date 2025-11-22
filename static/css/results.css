@@ -1,152 +1,139 @@
-/* --- RESULTS PAGE --- */
+.r-section {
+    padding: 10px;
+}
+
 .r-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+    margin-top: 3rem;
 }
 
 .r-header h2 {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--color-text-main);
     margin: 0;
+    text-shadow: 0 2px 4px rgba(255,255,255,0.5);
 }
 
 .results-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .result-item {
-    background-color: var(--color-surface-light);
-    padding: 1.25rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: var(--radius-md);
+    
+    padding: 1.5rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), #ec4899);
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .result-item:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-    .result-item {
-        background-color: var(--color-surface-dark);
-    }
+.result-item:hover::before {
+    opacity: 1;
+}
+
+.result-item h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--color-text-main); /* Not primary, looks cleaner */
+    margin: 0 0 8px 0;
 }
 
 .result-item a {
     text-decoration: none;
-    color: inherit;
-}
-
-.result-item h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    margin: 0;
-}
-
-.result-item:hover h3 {
-    text-decoration: underline;
 }
 
 .result-item .citation {
-    font-size: 0.875rem;
-    color: var(--color-muted-light);
-    margin-top: 0.25rem;
-}
-
-@media (prefers-color-scheme: dark) {
-    .result-item .citation {
-        color: var(--color-muted-dark);
-    }
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+    display: inline-block;
+    background: rgba(255,255,255,0.5);
+    padding: 4px 10px;
+    border-radius: 8px;
 }
 
 .result-item .snippet {
-    margin-top: 0.5rem;
+    margin-top: 12px;
+    color: var(--color-text-main);
+    line-height: 1.6;
+    background: rgba(255,255,255,0.3);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.4);
 }
 
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
 }
 
 .pagination-list {
-    list-style: none;
     display: flex;
-    gap: 0.5rem;
+    list-style: none;
     padding: 0;
     margin: 0;
+    gap: 8px;
+    align-items: center;
 }
 
 .pagination-list li {
-    display: inline;
+    display: inline-block;
 }
 
-.pagination-list a,
-.pagination-list span {
-    display: inline-block;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+.pagination-list a, .pagination-list span {
+    display: inline-block; /* Ensure block properties work */
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.6);
+    color: var(--color-text-main);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 600;
     text-decoration: none;
-    color: var(--color-primary);
-    background-color: var(--color-surface-light);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    transition: background-color 0.2s, color 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
 }
 
 .pagination-list a:hover {
-    background-color: var(--color-primary);
-    color: #fff;
+    background: white;
+    transform: translateY(-2px);
+    color: var(--color-primary);
 }
 
 .pagination-list .active span {
-    background-color: var(--color-primary);
-    color: #fff;
-    font-weight: 600;
-}
-
-@media (prefers-color-scheme: dark) {
-    .pagination-list a,
-    .pagination-list span {
-        background-color: var(--color-surface-dark);
-        color: var(--color-primary);
-    }
-
-    .pagination-list a:hover {
-        background-color: var(--color-primary);
-        color: #fff;
-    }
-
-    .pagination-list .active span {
-        background-color: var(--color-primary);
-        color: #fff;
-    }
-}
-
-
-.hidden {
-    display: none;
-}
-
-.show-hide-btn {
-    margin-top: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
-    border: none;
-    border-radius: 0.375rem;
-    background-color: var(--color-primary);
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.show-hide-btn:hover {
-    background-color: #333;
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
 }

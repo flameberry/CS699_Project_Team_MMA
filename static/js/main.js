@@ -10,23 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 historyDrop.style.display = "block";
             })
             
-            searchbar.addEventListener("blur", (e) => {
-                historyDrop.style.display = "block";
-            })
+            historyDrop.addEventListener("blur", () => {
+                // Add a small delay to allow click events on history items to register
+                setTimeout(() => {
+                    if (!historyDrop.contains(document.activeElement)) {
+                        historyDrop.style.display = "none";
+                    }
+                }, 100);
+            }, true); 
 
-            historyDrop.addEventListener("focus", (e) => {
-                historyDrop.style.display = "block";
-            })
-
-            historyDrop.addEventListener("blur",(e) => {
-                historyDrop.style.display = "none";
-            })
-            document.querySelectorAll(".history-item").forEach(item => {
-            item.addEventListener("click",(e) => {
-                searchbar.value = item.textContent;
-                historyDrop.style.display = "none";
-            })
-        });
+            document.querySelectorAll(".recent-query-link").forEach(item => {
+                item.addEventListener("click", (e) => {
+                    e.preventDefault(); // Prevent default link behavior
+                    searchbar.value = item.dataset.query; // Get query from data-query attribute
+                    historyDrop.style.display = "none";
+                });
+            });
         }
     }
 
@@ -60,8 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleAuthMod = () => {
         const authMod = document.getElementById('auth-mod');
         if (!authMod) return;
-        authMod.style.display = 'none';
-        // var authForm = document.getElementById("auth-form");
         const modTitle = document.getElementById('mod-title');
         const modActionBut = document.getElementById('mod-action-btn');
         const modSwitchText = document.getElementById('mod-switch-text');
@@ -83,7 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginFormDiv.innerHTML = '<input type="text" placeholder="Name" class="form-input" name="name" id="reg-name" required><input type="date" placeholder="Date Of Birth" class="form-input" name="dob" id = "reg-dob" required>' + loginFormDiv.innerHTML;
                 modSwitchText.innerHTML = `Already have an account? <a href="#" id="mod-switch-link" class="link">Login</a>`;
             }
-            authMod.style.display = 'flex';
+            authMod.classList.add('active'); // Use class for transition
+            
             const link = document.getElementById('mod-switch-link');
             if (link) {
                 link.addEventListener('click', (e) => {
@@ -94,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const closeMod = () => {
-            authMod.style.display = 'none';
+            authMod.classList.remove('active');
         };
 
         if (loginBut) loginBut.onclick = () => openMod(true);

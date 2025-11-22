@@ -1,60 +1,64 @@
 :root {
-    --color-primary: #3b82f6;
-    --color-primary-hover: #2563eb;
-    --color-text-light: #e2e8f0;
-    --color-text-dark: #1e293b;
-    --color-bg-light: #f1f5f9;
-    --color-bg-dark: #0f172a;
-    --color-surface-light: #ffffff;
-    --color-surface-dark: #1e293b;
-    --color-border-light: #e2e8f0;
-    --color-border-dark: #334155;
-    --color-muted-light: #64748b;
-    --color-muted-dark: #94a3b8;
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --glass-blur: blur(16px);
+    
+    --color-primary: #4f46e5;
+    --color-primary-hover: #4338ca; 
+    --color-text-main: #1e293b;
+    --color-text-muted: #475569;
+    --color-danger: #ef4444;
 
-    --font-family: 'Inter', sans-serif;
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    
+    --radius-lg: 20px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
 }
 
 body {
     font-family: var(--font-family);
     margin: 0;
-    transition: background-color 0.3s, color 0.3s;
+    padding: 0;
+    color: var(--color-text-main);
+    background-color: #f0f9ff;
+    background-image: 
+        radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+    background-image: 
+        radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 50%, rgba(217, 70, 239, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 100%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.5) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
 }
 
-@media (prefers-color-scheme: light) {
-    body {
-        background-color: var(--color-bg-light);
-        color: var(--color-text-dark);
-    }
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: var(--radius-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: var(--color-bg-dark);
-        color: var(--color-text-light);
-    }
-
-    .surface {
-        background-color: var(--color-surface-dark);
-        border-color: var(--color-border-dark);
-    }
-
-    .form-input {
-        background-color: var(--color-border-dark);
-        border-color: #cbcfd4;
-        color: var(--color-text-dark);
-    }
-
-    .logo span {
-        color: var(--color-text-light);
-    }
-
-    .button-l {
-        background-color: #334155;
-        color: var(--color-text-light);
-    }
-
-    .button-l:hover {
-        background-color: #475569;
-    }
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5); 
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 114, 128, 0.8); 
 }

@@ -389,7 +389,6 @@ if __name__ == '__main__':
         conn.commit()
         print("--- DATABASE INITIALIZED SUCCESSFULLY ---")
 
-    # Always reload lawyers on startup for this demo since we just scraped
     print("Loading lawyers from CSV...")
     if os.path.exists("lawyers.csv"):
         l_df = pd.read_csv("lawyers.csv")
@@ -402,7 +401,6 @@ if __name__ == '__main__':
                             row.get("state"), row.get("address"), row.get("specialization"), 
                             row.get("experience"), row.get("rating")))
         conn.commit()
-        print("--- LAWYERS DATA LOADED ---")
 
     conn.close()
     app.run(debug=True)
