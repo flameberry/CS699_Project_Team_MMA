@@ -60,7 +60,33 @@
                     </ul>
                     </div>
                     {% endif %}
-                    <div class="r-header" style="margin-top: 5%;">
+                    
+                    {% if suggested_lawyers %}
+                    <div class="suggested-lawyers-section" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
+                        <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #333;">Recommended Experts</h3>
+                        <div class="lawyer-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                            {% for lawyer in suggested_lawyers %}
+                            <div class="lawyer-card" style="background: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; display: flex; flex-direction: column;">
+                                <div class="lawyer-header" style="display: flex; align-items: center; margin-bottom: 8px;">
+                                    <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/40'">
+                                    <div>
+                                        <h4 style="margin: 0; font-size: 0.95rem;">{{ lawyer['name'] }}</h4>
+                                        <div style="font-size: 0.8rem; color: #f59e0b; font-weight: bold;">
+                                            {% if lawyer['rating'] != 'N/A' %} {{ lawyer['rating'] }} ★ {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px; line-height: 1.3;">
+                                    {{ lawyer['specialization'] }}
+                                </p>
+                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="font-size: 0.8rem; padding: 6px; width: 100%; display: block; text-align: center; box-sizing: border-box; text-decoration: none; margin-top: auto;">View Profile</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="r-header" style="margin-top: 3%;">
                         <h2>Search Results for "<span id="search-query-display">{{ query }}</span>"</h2>
                     </div>
                     <div class="pagination">

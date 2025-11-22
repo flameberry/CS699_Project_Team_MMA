@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Find Lawyers - LegalToday</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/layout.css">
+    <link rel="stylesheet" href="../static/css/buttons.css">
+    <link rel="stylesheet" href="../static/css/content.css">
+    <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/results.css"> <!-- Reusing results CSS for cards -->
+    <link rel="stylesheet" href="../static/css/user.css">
+    <style>
+        /* Specific styles for lawyer cards */
+        .lawyer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .lawyer-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s;
+        }
+        .lawyer-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .lawyer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .lawyer-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            background-color: #f0f0f0;
+        }
+        .lawyer-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        .lawyer-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .lawyer-details {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 12px;
+            flex-grow: 1;
+        }
+        .lawyer-details div {
+            margin-bottom: 4px;
+        }
+        .lawyer-action {
+            margin-top: auto;
+            width: 100%;
+        }
+        .lawyer-action .button-l {
+             width: 100%;
+             text-align: center;
+             display: block;
+             text-decoration: none;
+             box-sizing: border-box;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .filter-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <!--Header-->
+            <header class="header">
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
+                {% if login_status==False %}
+                <div class="header-buttons">
+                    <button id="login-but" class="button-l">Login</button>
+                    <button id="register-but" class="button-r">Registration</button>
+                </div>
+                {% else %}
+                <div class="header-buttons">
+                    <div class="user-menu">
+                    <span class="username">{{ name }}</span>
+                    <div class="dropdown">
+                        <a href="/history" id="history">History</a>
+                        <a href="#" id="logout">Logout</a>
+                    </div>
+                </div>
+                </div>
+                {% endif %}
+            </header>
+            
+            <main class="main-content">
+                <div class="results-container">
+                    <h2>Find Expert Lawyers</h2>
+                    
+                    <form class="filter-bar" action="{{ url_for('lawyers') }}" method="GET">
+                        <input type="text" name="query" class="filter-input" placeholder="Search by name or specialization..." value="{{ query }}">
+                        <input type="text" name="city" class="filter-input" placeholder="City..." value="{{ city }}">
+                        <button type="submit" class="button-r">Filter</button>
+                    </form>
+
+                    {% if lawyers %}
+                    <div class="lawyer-grid">
+                        {% for lawyer in lawyers %}
+                        <div class="lawyer-card">
+                            <div class="lawyer-header">
+                                <img src="{{ lawyer['image_url'] }}" alt="{{ lawyer['name'] }}" class="lawyer-img" onerror="this.src='https://via.placeholder.com/60'">
+                                <div class="lawyer-info">
+                                    <h3>{{ lawyer['name'] }}</h3>
+                                    <p>{{ lawyer['specialization'] }}</p>
+                                </div>
+                            </div>
+                            <div class="lawyer-details">
+                                <div><strong>Location:</strong> {{ lawyer['city'] }}, {{ lawyer['state'] }}</div>
+                                {% if lawyer['experience'] != 'N/A' %}
+                                <div><strong>Experience:</strong> {{ lawyer['experience'] }}</div>
+                                {% endif %}
+                                {% if lawyer['rating'] != 'N/A' %}
+                                <div><strong>Rating:</strong> {{ lawyer['rating'] }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="lawyer-action">
+                                <a href="{{ lawyer['url'] }}" target="_blank" class="button-l" style="width: 100%; text-align: center; display: block; text-decoration: none;">View Profile</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="no-results">
+                        <p>No lawyers found matching your criteria.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Login Modal (Reused) -->
+    <div id="auth-mod" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="mod-title" class="text-2xl font-bold">Login</h3>
+                <button id="close-modal-btn" class="close-modal-btn">&times;</button>
+            </div>
+            <form id="auth-form" method="POST">
+                <div class="space-y-4" id="login-form-div">
+                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email" required>
+                    <input type="password" placeholder="Password" class="form-input" name="password" id = "login-pwd" required>
+                </div>
+                <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
+                <p id="mod-switch-text" class="mod-switch-text"> Create An Account Today:
+                    <a href="#" id="mod-switch-link" class="text-blue-500 hover:underline">Register</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="../static/js/main.js"></script>
+</body>
+
+</html>

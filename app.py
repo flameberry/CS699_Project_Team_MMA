@@ -11,6 +11,7 @@ import google.generativeai as genai
 import numpy as np
 import json
 import concurrent.futures
+import re
 
 load_dotenv()
 
@@ -66,6 +67,21 @@ def generate_summary(text, query, api_key):
         print(f"Summary Error: {e}")
         return text
 
+def get_practice_area_keywords(query, api_key):
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(MODEL_NAME)
+        prompt = f"""
+        Extract the main legal practice area from this query: "{query}". 
+        Return ONLY the single word or short phrase (e.g., "Divorce", "Criminal", "Property", "Corporate", "Cheque Bounce").
+        If no specific area matches, return "General".
+        """
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        print(f"Practice Area Extraction Error: {e}")
+        return "General"
+
 @app.route('/')
 def index():
     email = session.get("email")
@@ -98,6 +114,29 @@ def search_query(page_num):
             conn.commit()
             cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 5''', (email,))
             past_queries = [row for row in cursor.fetchall()]
+        
+        # Lawyer Suggestions
+        suggested_lawyers = []
+        try:
+            practice_area = get_practice_area_keywords(query, api_keys[0])
+            print(f"Extracted Practice Area: {practice_area}")
+            
+            # Fallback if AI fails or returns generic
+            if practice_area == "General":
+                 # Simple keyword match
+                 words = query.split()
+                 practice_area = words[0] if words else ""
+            
+            cursor.execute('''
+                SELECT * FROM lawyers 
+                WHERE specialization LIKE ? 
+                ORDER BY rating DESC 
+                LIMIT 3
+            ''', (f'%{practice_area}%',))
+            suggested_lawyers = cursor.fetchall()
+        except Exception as e:
+            print(f"Lawyer Suggestion Error: {e}")
+
         try:
             query_res = genai.embed_content(
                 model=EMBEDDING_MODEL,
@@ -178,20 +217,10 @@ def search_query(page_num):
                         "judgement_date": orig_row['judgement_date'],
                         "snippet": orig_row['snippet']
                     }
-        # for score, row in static_batch:
-        #     final_static_results.append({
-        #         "id": row['id'],
-        #         "case_id": row['case_id'],
-        #         "case_title": row['case_title'],
-        #         "title": row['case_title'],
-        #         "citation": row['citation'],
-        #         "judgement_date": row['judgement_date'],
-        #         "snippet": row['snippet']
-        #     })
 
         final_cases = [x for x in ai_results_fixed if x is not None]
         conn.close()
-        return render_template('search-result.html', query=query, cases=final_cases, past_queries=past_queries, page_nums=page_nums, login_status=session.get("login_status", False), name=session.get("name"))
+        return render_template('search-result.html', query=query, cases=final_cases, past_queries=past_queries, page_nums=page_nums, login_status=session.get("login_status", False), name=session.get("name"), suggested_lawyers=suggested_lawyers)
 
 @app.route('/doc_view/<id>')
 def doc_view(id):
@@ -256,6 +285,31 @@ def logout():
 def serve_pdf(filename):
     return send_from_directory('static/pdfs', filename)
 
+@app.route('/lawyers')
+def lawyers():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    query = request.args.get('query', '').strip()
+    city = request.args.get('city', '').strip()
+    
+    sql = "SELECT * FROM lawyers WHERE 1=1"
+    params = []
+    
+    if query:
+        sql += " AND (name LIKE ? OR specialization LIKE ?)"
+        params.extend([f'%{query}%', f'%{query}%'])
+    if city:
+        sql += " AND city LIKE ?"
+        params.append(f'%{city}%')
+        
+    cursor.execute(sql, params)
+    lawyers_data = cursor.fetchall()
+    conn.close()
+    
+    return render_template("lawyers.html", lawyers=lawyers_data, query=query, city=city, 
+                           login_status=session.get("login_status", False), name=session.get("name"))
+
 @app.route('/history', methods=['GET'])
 def history():
     conn = get_db_connection()
@@ -292,7 +346,24 @@ if __name__ == '__main__':
         embedding TEXT
     )''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, query TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+    
+    # Force reset lawyers table if needed or just create
+    # To handle updates, we'll check if it's empty or just reload if CSV exists
+    cursor.execute('DROP TABLE IF EXISTS lawyers')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS lawyers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        url TEXT,
+        image_url TEXT,
+        city TEXT,
+        state TEXT,
+        address TEXT,
+        specialization TEXT,
+        experience TEXT,
+        rating TEXT
+    )''')
     conn.commit()
+    
     cursor.execute('SELECT count(*) FROM cases')
     count = cursor.fetchone()[0]
     
@@ -317,6 +388,21 @@ if __name__ == '__main__':
                             row.get("snippet"), vector_json))
         conn.commit()
         print("--- DATABASE INITIALIZED SUCCESSFULLY ---")
+
+    # Always reload lawyers on startup for this demo since we just scraped
+    print("Loading lawyers from CSV...")
+    if os.path.exists("lawyers.csv"):
+        l_df = pd.read_csv("lawyers.csv")
+        l_df = l_df.where(pd.notnull(l_df), None)
+        l_records = l_df.to_dict(orient='records')
+        for row in l_records:
+            cursor.execute('''INSERT INTO lawyers (name, url, image_url, city, state, address, specialization, experience, rating)
+                           VALUES (?,?,?,?,?,?,?,?,?)''',
+                           (row.get("name"), row.get("url"), row.get("image_url"), row.get("city"), 
+                            row.get("state"), row.get("address"), row.get("specialization"), 
+                            row.get("experience"), row.get("rating")))
+        conn.commit()
+        print("--- LAWYERS DATA LOADED ---")
 
     conn.close()
     app.run(debug=True)
