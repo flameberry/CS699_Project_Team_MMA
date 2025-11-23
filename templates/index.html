@@ -25,22 +25,28 @@
             <!--Header-->
             <header class="header">
                 <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
-                {% if login_status==False %}
-                <div class="header-buttons">
-                    <button id="login-but" class="button-l">Login</button>
-                    <button id="register-but" class="button-r">Registration</button>
-                </div>
-                {% else %}
-                <div class="header-buttons">
-                    <div class="user-menu">
-                    <span class="username">{{ name }}</span>
-                    <div class="dropdown">
-                        <a href="#" id="history">History</a>
-                        <a href="#" id="logout">Logout</a>
+
+                <nav class="header-nav">
+                    <a href="{{ url_for('news') }}">Legal News</a>
+                    <a href="{{ url_for('lawyers') }}">Find Lawyers</a>
+                </nav>
+
+                <div class="header-right">
+                    {% if login_status==False %}
+                    <div class="header-buttons">
+                        <button id="login-but" class="button-l">Login</button>
+                        <button id="register-but" class="button-r">Registration</button>
                     </div>
+                    {% else %}
+                    <div class="user-menu">
+                        <span class="username">{{ name }}</span>
+                        <div class="dropdown">
+                            <a href="#" id="history">History</a>
+                            <a href="#" id="logout">Logout</a>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-                </div>
-                {% endif %}
             </header>
             <!---Content-->
             <main class="main-content">
@@ -50,7 +56,8 @@
                         <p>Access a vast database of legal judgements from Supreme Court and access summarised views and
                             search over them</p>
                     </div>
-                    <form id="search-form" class="search-form" action="{{ url_for('search_query',page_num=1) }}" method="GET">
+                    <form id="search-form" class="search-form" action="{{ url_for('search_query',page_num=1) }}"
+                        method="GET">
                         <div class="search-input">
                             <input type="text" id="search-input" name="query" autocomplete="off"
                                 placeholder="Search using case titles, citations, keywords..." required>
@@ -59,7 +66,9 @@
                     </form>
                     {% if past_queries %}
                     <div class="recent-history">
-                        <h3 style="font-size: 1rem; color: var(--color-text-muted); margin-bottom: 10px; text-align: left; padding-left: 10px;">Recent Searches:</h3>
+                        <h3
+                            style="font-size: 1rem; color: var(--color-text-muted); margin-bottom: 10px; text-align: left; padding-left: 10px;">
+                            Recent Searches:</h3>
                         <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px;">
                             {% for item in past_queries %}
                             <li>
@@ -71,10 +80,10 @@
                         </ul>
                     </div>
                     {% endif %}
-                    </div>
-                </section>
-            </main>
         </div>
+        </section>
+        </main>
+    </div>
     </div>
     <!--Login and Registration-->
     <div id="auth-mod" class="modal-backdrop">
@@ -85,8 +94,10 @@
             </div>
             <form id="auth-form" method="POST">
                 <div class="space-y-4" id="login-form-div">
-                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email" required>
-                    <input type="password" placeholder="Password" class="form-input" name="password" id = "login-pwd" required>
+                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email"
+                        required>
+                    <input type="password" placeholder="Password" class="form-input" name="password" id="login-pwd"
+                        required>
                 </div>
                 <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
                 <p id="mod-switch-text" class="mod-switch-text"> Create An Account Today:

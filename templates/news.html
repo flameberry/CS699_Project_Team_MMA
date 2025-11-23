@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Legal News - LegalToday</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/layout.css">
+    <link rel="stylesheet" href="../static/css/buttons.css">
+    <link rel="stylesheet" href="../static/css/content.css">
+    <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/auth.css">
+    <link rel="stylesheet" href="../static/css/results.css">
+    <link rel="stylesheet" href="../static/css/documents.css">
+    <link rel="stylesheet" href="../static/css/user.css">
+    <link rel="stylesheet" href="../static/css/news.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <header class="header">
+                <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
+
+                <nav class="header-nav">
+                    <a href="{{ url_for('news') }}">Legal News</a>
+                    <a href="{{ url_for('lawyers') }}">Find Lawyers</a>
+                </nav>
+
+                <div class="header-right">
+                    {% if login_status==False %}
+                    <div class="header-buttons">
+                        <button id="login-but" class="button-l">Login</button>
+                        <button id="register-but" class="button-r">Registration</button>
+                    </div>
+                    {% else %}
+                    <div class="user-menu">
+                        <span class="username">{{ name }}</span>
+                        <div class="dropdown">
+                            <a href="#" id="history">History</a>
+                            <a href="#" id="logout">Logout</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="h-text">
+                    <h2>Legal News Feed</h2>
+                    <p>Latest updates on "{{ topic }}"</p>
+                </div>
+
+                <form action="{{ url_for('news') }}" method="GET" class="search-form" style="margin-bottom: 30px;">
+                    <div class="search-input">
+                        <input type="text" name="topic" value="{{ topic }}"
+                            placeholder="Search news topics (e.g., Copyright, Criminal Law)..." required>
+                        <button type="submit" class="button-r search-button">Find News</button>
+                    </div>
+                </form>
+
+                <div class="news-grid">
+                    {% for article in articles %}
+                    <div class="news-card">
+                        {% if article.urlToImage %}
+                        <img src="{{ article.urlToImage }}" alt="News Image" class="news-image"
+                            onerror="this.style.display='none'">
+                        {% else %}
+                        <div class="news-image"
+                            style="display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                            No Image
+                        </div>
+                        {% endif %}
+
+                        <div class="news-content">
+                            <span class="news-source">{{ article.source.name }}</span>
+                            <h3 class="news-title">{{ article.title }}</h3>
+                            <p class="news-desc">{{ article.description }}</p>
+
+                            <div class="news-footer">
+                                <span class="news-date">{{ article.publishedAt[:10] }}</span>
+                                <a href="{{ article.url }}" target="_blank" class="read-more">Read Full Article
+                                    &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
+                        <p>No news articles found for this topic. Please try a different search.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

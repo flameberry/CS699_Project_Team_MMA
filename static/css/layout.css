@@ -15,19 +15,15 @@
 
 .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
     margin-bottom: 30px;
-    
-    /* Floating Glass Header */
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    border-radius: 100px; /* Pill shape */
-    
+    border-radius: 100px;
     position: sticky;
     top: 20px;
     z-index: 100;
@@ -41,6 +37,8 @@
     text-decoration: none;
     display: flex;
     align-items: center;
+    margin-right: 40px;
+    white-space: nowrap;
 }
 
 .logo span {
@@ -50,73 +48,34 @@
     -webkit-text-fill-color: transparent;
 }
 
+.header-nav {
+    display: flex;
+    gap: 25px;
+    margin-right: auto;
+}
+
+.header-nav a {
+    color: #475569;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.header-nav a:hover {
+    color: var(--color-primary);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 .header-buttons {
     display: flex;
     gap: 15px;
     align-items: center;
-}
-
-.user-menu {
-    position: relative;
-    display: inline-block;
-}
-
-.username {
-    display: block;
-    padding: 10px 15px;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 50px;
-    color: var(--color-text-main);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.username:hover {
-    background: rgba(255, 255, 255, 0.7);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.dropdown {
-    position: absolute;
-    top: calc(100% + 10px); 
-    right: 0;
-    min-width: 150px;
-    background: var(--glass-bg); 
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: var(--radius-md);
-    padding: 10px 0;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-    z-index: 10;
-}
-
-.user-menu:hover .dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown a {
-    display: block;
-    padding: 8px 15px;
-    color: var(--color-text-main);
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.dropdown a:hover {
-    background-color: rgba(79, 70, 229, 0.1);
-    color: var(--color-primary);
 }
 
 .main-content {

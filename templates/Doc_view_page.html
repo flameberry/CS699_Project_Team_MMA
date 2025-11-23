@@ -23,24 +23,29 @@
     <div class="page-container">
         <div class="content-wrapper">
             <!--Header-->
-            <header class="header">
+           <header class="header">
                 <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
-                <div class="header-buttons">
-                    {% if login_status==0 %}
-                <div class="header-buttons">
-                    <button id="login-but" class="button-l">Login</button>
-                    <button id="register-but" class="button-r">Registration</button>
-                </div>
-                {% else %}
-                <div class="header-buttons">
-                    <div class="user-menu">
-                    <span class="username">{{ name }}</span>
-                    <div class="dropdown">
-                        <a href="#" id="history">History</a>
-                        <a href="#" id="logout">Logout</a>
+
+                <nav class="header-nav">
+                    <a href="{{ url_for('news') }}">Legal News</a>
+                    <a href="{{ url_for('lawyers') }}">Find Lawyers</a>
+                </nav>
+
+                <div class="header-right">
+                    {% if login_status==False %}
+                    <div class="header-buttons">
+                        <button id="login-but" class="button-l">Login</button>
+                        <button id="register-but" class="button-r">Registration</button>
                     </div>
-                </div>
-                {% endif %}
+                    {% else %}
+                    <div class="user-menu">
+                        <span class="username">{{ name }}</span>
+                        <div class="dropdown">
+                            <a href="#" id="history">History</a>
+                            <a href="#" id="logout">Logout</a>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </header>
             <!---Content-->

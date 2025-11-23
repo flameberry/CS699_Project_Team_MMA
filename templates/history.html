@@ -25,22 +25,28 @@
         <div class="content-wrapper">
             <header class="header">
                 <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
-                {% if not name %}
-                <div class="header-buttons">
-                    <button id="login-but" class="button-l">Login</button>
-                    <button id="register-but" class="button-r">Registration</button>
-                </div>
-                {% else %}
-                <div class="header-buttons">
+
+                <nav class="header-nav">
+                    <a href="{{ url_for('news') }}">Legal News</a>
+                    <a href="{{ url_for('lawyers') }}">Find Lawyers</a>
+                </nav>
+
+                <div class="header-right">
+                    {% if login_status==False %}
+                    <div class="header-buttons">
+                        <button id="login-but" class="button-l">Login</button>
+                        <button id="register-but" class="button-r">Registration</button>
+                    </div>
+                    {% else %}
                     <div class="user-menu">
                         <span class="username">{{ name }}</span>
                         <div class="dropdown">
-                            <a href="{{ url_for('history') }}" id="history">History</a>
+                            <a href="#" id="history">History</a>
                             <a href="#" id="logout">Logout</a>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </header>
 
             <main class="main-content">

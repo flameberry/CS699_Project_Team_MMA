@@ -12,6 +12,7 @@ import numpy as np
 import json
 import concurrent.futures
 import re
+import requests
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ app.secret_key = secrets.token_hex(32)
 Session(app)
 
 api_keys = [os.getenv("GEMINI_API_KEY1"),os.getenv("GEMINI_API_KEY2"),os.getenv("GEMINI_API_KEY3")]
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 n_apis = len(api_keys)
 genai.configure(api_key=api_keys[0])
@@ -94,6 +96,35 @@ def index():
         past_queries = [row for row in cursor.fetchall()]
         conn.close()
     return render_template("index.html", login_status=session.get("login_status", False), name=name, email=email, past_queries=past_queries)
+
+@app.route('/news')
+def news():
+    topic = request.args.get('topic','legal')
+    
+    url = f"https://newsapi.org/v2/everything"
+    params = {
+        'q': topic,
+        'apiKey': NEWS_API_KEY,
+        'language': 'en',
+        'sortBy': 'relevancy',
+        'pageSize': 20
+    }
+    
+    articles = []
+    try:
+        response = requests.get(url, params=params)
+        data = response.json()
+        if data.get('status') == 'ok':
+            articles = data.get('articles', [])
+            articles.sort(key=lambda x: x['publishedAt'], reverse=True)
+    except:
+        articles = []
+
+    return render_template('news.html', 
+                         articles=articles, 
+                         topic=topic,
+                         login_status=session.get("login_status", False), 
+                         name=session.get("name"))
 
 @app.route('/search_query/<int:page_num>', methods=["GET", "POST"])
 def search_query(page_num):

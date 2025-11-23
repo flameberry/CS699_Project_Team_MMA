@@ -16,81 +16,7 @@
     <link rel="stylesheet" href="../static/css/auth.css">
     <link rel="stylesheet" href="../static/css/results.css">
     <link rel="stylesheet" href="../static/css/documents.css">
-    <style>
-        .lawyer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 10px 0;
-        }
-        .lawyer-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .lawyer-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(31, 38, 135, 0.15);
-        }
-        
-        .lawyer-header {
-            display: flex;
-            align-items: start;
-            margin-bottom: 12px;
-            gap: 12px;
-        }
-        .lawyer-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255,255,255,0.8);
-        }
-        
-        .lawyer-info h4 {
-            margin: 0 0 4px 0;
-            font-size: 1rem;
-            color: var(--color-text-main);
-            font-weight: 700;
-        }
-        
-        .practice-areas-sm {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-            margin-bottom: 15px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* Truncate to 2 lines */
-            -webkit-box-orient: vertical;
-            flex-grow: 1;
-            line-height: 1.5;
-        }
-        
-        .suggested-lawyers-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 16px;
-            margin-bottom: 2rem;
-        }
-        
-        .section-title {
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            color: var(--color-text-main);
-            font-weight: 700;
-        }
-    </style>
+    <link rel="stylesheet" href="../static/css/user.css">
 </head>
 
 <body>
@@ -99,13 +25,19 @@
             <!--Header-->
             <header class="header">
                 <a href="{{ url_for('index') }}" class="logo">Legal<span>Today</span></a>
-                {% if login_status==0 %}
-                <div class="header-buttons">
-                    <button id="login-but" class="button-l">Login</button>
-                    <button id="register-but" class="button-r">Registration</button>
-                </div>
-                {% else %}
-                <div class="header-buttons">
+
+                <nav class="header-nav">
+                    <a href="{{ url_for('news') }}">Legal News</a>
+                    <a href="{{ url_for('lawyers') }}">Find Lawyers</a>
+                </nav>
+
+                <div class="header-right">
+                    {% if login_status==False %}
+                    <div class="header-buttons">
+                        <button id="login-but" class="button-l">Login</button>
+                        <button id="register-but" class="button-r">Registration</button>
+                    </div>
+                    {% else %}
                     <div class="user-menu">
                         <span class="username">{{ name }}</span>
                         <div class="dropdown">
@@ -114,6 +46,7 @@
                         </div>
                     </div>
                     {% endif %}
+                </div>
             </header>
             <!---Content-->
             <main class="main-content">
