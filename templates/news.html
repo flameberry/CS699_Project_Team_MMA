@@ -97,6 +97,29 @@
             </main>
         </div>
     </div>
+
+    <div id="auth-mod" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="mod-title" class="text-2xl font-bold">Login</h3>
+                <button id="close-modal-btn" class="close-modal-btn">&times;</button>
+            </div>
+            <form id="auth-form" method="POST">
+                <div class="space-y-4" id="login-form-div">
+                    <input type="email" placeholder="Email Address" class="form-input" name="email" id="login-email"
+                        required>
+                    <input type="password" placeholder="Password" class="form-input" name="password" id="login-pwd"
+                        required>
+                </div>
+                <button type="submit" id="mod-action-btn" class="button-primary full-width-btn">Login</button>
+                <p id="mod-switch-text" class="mod-switch-text">Create An Account Today:
+                    <a href="#" id="mod-switch-link" class="text-blue-500 hover:underline">Register</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="../static/js/main.js"></script>
 </body>
 
 </html>
