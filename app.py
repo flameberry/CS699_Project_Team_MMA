@@ -100,10 +100,12 @@ def index():
 @app.route('/news')
 def news():
     topic = request.args.get('topic','legal')
-    
+    indian_sources = 'livelaw.in,barandbench.com,timesofindia.indiatimes.com,thehindu.com,hindustantimes.com,indianexpress.com,ndtv.com,indiatoday.in,theprint.in'
     url = f"https://newsapi.org/v2/everything"
     params = {
-        'q': topic,
+        'q': topic, 
+        'domains': indian_sources, 
+        'searchIn': 'title,description',
         'apiKey': NEWS_API_KEY,
         'language': 'en',
         'sortBy': 'relevancy',
@@ -158,12 +160,7 @@ def search_query(page_num):
                  words = query.split()
                  practice_area = words[0] if words else ""
             
-            cursor.execute('''
-                SELECT * FROM lawyers 
-                WHERE specialization LIKE ? 
-                ORDER BY rating DESC 
-                LIMIT 3
-            ''', (f'%{practice_area}%',))
+            cursor.execute('''SELECT * FROM lawyers WHERE specialization LIKE ? ORDER BY rating DESC LIMIT 3''', (f'%{practice_area}%',))
             suggested_lawyers = cursor.fetchall()
         except Exception as e:
             print(f"Lawyer Suggestion Error: {e}")
@@ -208,10 +205,8 @@ def search_query(page_num):
             top_results = []
         page_nums = (page_num,int(np.ceil(len(top_results)/10)))
         ai_batch = top_results[(page_num-1)*10:page_num*10]
-        # static_batch = top_results[5:]
         
         ai_results_fixed = [None] * len(ai_batch)
-        # final_static_results = []
 
         def process_ai_item(data, api_key):
             index, item = data
