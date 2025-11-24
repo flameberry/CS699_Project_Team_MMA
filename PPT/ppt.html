@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>LegalToday - Project Presentation</title>
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/white.min.css">
+
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS for custom styling inside slides -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Mermaid JS for Diagrams -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+
+    <style>
+        /* Custom overrides for LegalToday Theme */
+        :root {
+            --r-main-font: 'Inter', sans-serif;
+            --r-heading-font: 'Inter', sans-serif;
+            --r-link-color: #4f46e5;
+            --r-selection-color: #4f46e5;
+            --r-background-color: #f8fafc;
+        }
+
+        .reveal h1, .reveal h2 {
+            text-transform: none; 
+            letter-spacing: -0.02em;
+            font-weight: 800;
+        }
+        
+        .reveal h3 {
+            text-transform: none;
+            font-weight: 500;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        /* Enhanced Glass Card with Hover Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #818cf8;
+        }
+
+        /* Code Log Styling */
+        .code-log {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #1e293b;
+            color: #34d399;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            border-left: 3px solid #34d399;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Animated Screenshot Placeholder */
+        .screenshot-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #f1f5f9 25%, #f8fafc 25%, #f8fafc 50%, #f1f5f9 50%, #f1f5f9 75%, #f8fafc 75%, #f8fafc 100%);
+            background-size: 20px 20px;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            border-radius: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-placeholder:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background-color: #eff6ff;
+            transform: scale(1.01);
+        }
+        
+        /* Smooth Text Selection */
+        ::selection {
+            background: #c7d2fe;
+            color: #1e1b4b;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: Title -->
+            <section>
+                <h1 class="text-6xl font-bold mb-4">Legal<span class="gradient-text">Today</span></h1>
+                <h3 class="text-2xl text-gray-600 mb-8">AI-Driven Semantic Search & Research Platform</h3>
+                
+                <div class="flex justify-center gap-8 mt-12 text-left text-lg">
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="font-bold text-gray-800">Team Members:</p>
+                        <ul class="list-none space-y-1">
+                            <li>Madhur Thakkar (25M0742)</li>
+                            <li>Monil Manish Desai (25M0744)</li>
+                            <li>Aditya Gaikwad (25M0745)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- <div class="mt-8 text-sm text-gray-400">
+                    (Press 'S' on keyboard to view Speaker Notes)
+                </div> -->
+
+                <aside class="notes">
+                    Good morning everyone. Today we are presenting "LegalToday", a web application designed to solve the complexity of legal research using Generative AI. 
+                    Our goal was to move beyond simple keyword matching and create a system that understands legal context.
+                </aside>
+            </section>
+
+            <!-- SLIDE 2: Problem & Scope -->
+            <section>
+                <div class="grid grid-cols-2 gap-8 items-center">
+                    <div class="text-left">
+                        <h2 class="text-3xl font-bold text-indigo-600 mb-6">The Problem</h2>
+                        <ul class="space-y-4 text-xl">
+                            <li class="fragment fade-in">📜 <strong>Volume:</strong> Thousands of judgements generated daily.</li>
+                            <li class="fragment fade-in">🔍 <strong>Keyword Failure:</strong> Searching "Wife Beating" won't find cases filed under "Section 498A" using standard search.</li>
+                            <li class="fragment fade-in">⏳ <strong>Time:</strong> Reading 50-page documents just to find relevance is inefficient.</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card text-left fragment fade-in">
+                        <h3 class="text-2xl font-bold mb-4">Project Scope</h3>
+                        <ul class="text-lg list-disc pl-5 space-y-2">
+                            <li>Semantic Vector Search</li>
+                            <li>AI Summarization (1-paragraph)</li>
+                            <li>Lawyer Recommendation System</li>
+                            <li>Real-time Legal News</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <p class="text-sm font-bold text-red-500">Limitations:</p>
+                            <p class="text-sm text-gray-600">Dependent on API quotas; English language only.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    We identified three main problems. 
+                    1. The sheer volume of data.
+                    2. The failure of keyword search. If a user searches for layman terms, traditional databases fail.
+                    3. The time consumption in reading full PDFs.
+                    Our solution covers search, summarization, and connecting users to lawyers.
+                </aside>
+            </section>
+
+            <!-- SLIDE 3: Architecture Diagram -->
+            <section>
+                <h2 class="text-3xl font-bold mb-6">System Architecture</h2>
+                <!-- Mermaid Diagram Container -->
+                <div class="mermaid" style="display: flex; justify-content: center; width: 100%;">
+                    graph LR
+                    U[User] -->|Query| UI["Frontend<br>HTML/JS"]
+                    UI -->|Fetch| API[Flask API]
+                    
+                    subgraph Backend
+                        API --> Auth["Auth<br>Service"]
+                        API --> Embed["Embedding<br>Logic"]
+                        API --> Search["Vector<br>Search"]
+                    end
+                    
+                    subgraph Data
+                        DB[(SQLite)]
+                        Embed -->|Store/Retrieve<br>Vectors| DB
+                    end
+                    
+                    subgraph AI_Engine
+                        Search -->|1. Query<br>Vector| Gemini[Gemini API]
+                        Search -->|2. Generate<br>Summary| Gemini
+                    end
+                    
+                    Gemini -->|Response| API
+                    API -->|JSON| UI
+                </div>
+
+                <aside class="notes">
+                    Here is the high-level data flow.
+                    1. The user query is sent to our Flask backend.
+                    2. We send the text to Google Gemini to get a "Vector Embedding" (a numerical representation of the text).
+                    3. We compare this vector against our SQLite database using Cosine Similarity.
+                    4. The top results are sent back to Gemini to generate a summary, which is returned to the user.
+                </aside>
+            </section>
+
+            <!-- SLIDE 4: Tech Stack (Fixed Alignment) -->
+            <section>
+                <h2 class="text-3xl font-bold mb-8">Technology Stack</h2>
+                <div class="grid grid-cols-4 gap-4">
+                    <!-- Backend -->
+                    <div class="glass-card flex flex-col items-center !p-6 h-full justify-between">
+                        <div class="w-full flex flex-col items-center">
+                            <span class="text-4xl mb-3">🐍</span>
+                            <h3 class="text-lg font-bold text-center leading-tight min-h-[4rem] flex items-center justify-center">Python Flask</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Backend Server & API</p>
+                    </div>
+
+                    <!-- Database -->
+                    <div class="glass-card flex flex-col items-center !p-6 h-full justify-between">
+                        <div class="w-full flex flex-col items-center">
+                            <span class="text-4xl mb-3">🗄️</span>
+                            <h3 class="text-lg font-bold text-center leading-tight min-h-[4rem] flex items-center justify-center">SQLite</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Relational DB & Vectors</p>
+                    </div>
+
+                    <!-- AI -->
+                    <div class="glass-card flex flex-col items-center !p-6 h-full justify-between">
+                        <div class="w-full flex flex-col items-center">
+                            <span class="text-4xl mb-3">✨</span>
+                            <h3 class="text-lg font-bold text-center leading-tight min-h-[4rem] flex items-center justify-center">Google Gemini API</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Embed-004 & Flash</p>
+                    </div>
+
+                    <!-- Frontend -->
+                    <div class="glass-card flex flex-col items-center !p-6 h-full justify-between">
+                        <div class="w-full flex flex-col items-center">
+                            <span class="text-4xl mb-3">🎨</span>
+                            <h3 class="text-lg font-bold text-center leading-tight min-h-[4rem] flex items-center justify-center">HTML / CSS / JS</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Modular CSS, Fetch API</p>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    We used a lightweight but powerful stack. 
+                    Flask for the backend allows easy integration with Python libraries.
+                    SQLite handles our user data and case vectors.
+                    The core intelligence is powered by Google Gemini Models.
+                </aside>
+            </section>
+
+            <!-- SLIDE 5: Team Contributions -->
+            <section>
+                <h2 class="text-3xl font-bold mb-6">Team Contributions</h2>
+                <table class="w-full text-left border-collapse text-lg">
+                    <thead>
+                        <tr class="bg-gray-100 border-b border-gray-300">
+                            <th class="p-3 w-1/4">Member</th>
+                            <th class="p-3 w-1/3">Module Contribution</th>
+                            <th class="p-3 w-1/3">Key Git Commit Logs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Madhur Thakkar -->
+                        <tr class="border-b border-gray-200">
+                            <td class="p-3 font-bold text-indigo-600">Madhur Thakkar</td>
+                            <td class="p-3 text-base">Backend Core, Auth System, AI Parallelization</td>
+                            <td class="p-3">
+                                <div class="code-log">feat: pagination and parallelized summary generation</div>
+                                <div class="code-log">backend: setup users db, registration and login</div>
+                            </td>
+                        </tr>
+                        <!-- Monil Manish Desai -->
+                        <tr class="border-b border-gray-200">
+                            <td class="p-3 font-bold text-indigo-600">Monil Manish Desai</td>
+                            <td class="p-3 text-base">Frontend UI, Search/News Modules, Search Integration</td>
+                            <td class="p-3">
+                                <div class="code-log">feat: AI search and summary features</div>
+                                <div class="code-log">frontend: history page and search result logic</div>
+                            </td>
+                        </tr>
+                        <!-- Aditya Gaikwad -->
+                        <tr>
+                            <td class="p-3 font-bold text-indigo-600">Aditya Gaikwad</td>
+                            <td class="p-3 text-base">Data Scraping (Cases/Lawyers), UI Polish, Data Pipeline</td>
+                            <td class="p-3">
+                                <div class="code-log">ui: major UI overhaul and lawyer scraping</div>
+                                <div class="code-log">data: collecting supreme court cases via scraping</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <aside class="notes">
+                    Madhur handled the backend architecture and parallelized the AI summaries to handle 10 requests at once.
+                    Monil built the entire frontend interface, the news module, and integrated the search results.
+                    Aditya focused on data acquisition, scraping thousands of cases and lawyer profiles, and polished the final UI.
+                </aside>
+            </section>
+
+
+            <!-- SLIDE 6: Project Demo - Home -->
+            <section>
+                <h2 class="text-3xl font-bold mb-4">Smart Search & History</h2>
+                
+                <!-- PLACEHOLDER FOR IMAGE -->
+                <div class="screenshot-placeholder" style="height: 500px;">
+                    <img src="sm&h.png" alt="Insert Homepage Screenshot Here" style="height: 1500px; width: 1500px; display: none;" onload="this.style.display='block'; this.parentElement.style.background='none'; this.parentElement.style.border='none';">
+                </div>
+
+                <p class="text-sm text-gray-600">Features: Clean UI, Session-based history, Auto-focus search.</p>
+
+                <aside class="notes">
+                    Here is our Home Page. Notice the clean, Google-like interface. 
+                    Recent search appears showing their last 5 queries, fetched from the SQLite database.
+                </aside>
+            </section>
+
+            <!-- SLIDE 7: Project Demo - Results -->
+            <section>
+                <h2 class="text-3xl font-bold mb-4">AI Summarization & Lawyers</h2>
+                
+                <!-- PLACEHOLDER FOR IMAGE -->
+                <div class="screenshot-placeholder" style="height: 500px;">
+                    <img src="ai&l.png" alt="Insert Search Result Screenshot Here" style="max-height: 100%; display: none;" onload="this.style.display='block'; this.parentElement.style.background='none'; this.parentElement.style.border='none';">
+                </div>
+
+                <p class="text-sm text-gray-600">Highlighted: AI Summary Button & Side-panel Lawyer Suggestions.</p>
+
+                <aside class="notes">
+                    This is the core feature.
+                    1. On the left, we have case results. Notice the "Show Summary" button. This triggers the AI explanation.
+                    2. On the right, the system has automatically detected the legal topic and suggested relevant lawyers.
+                </aside>
+            </section>
+
+            <section>
+                <h2 class="text-3xl font-bold mb-4">Document Viewer</h2>
+                
+                <!-- PLACEHOLDER FOR IMAGE -->
+                <div>
+                        <div class="screenshot-placeholder" style="height: 500px;">
+                             <img src="dc.png" alt="Doc View" style="max-height: 100%; display: none;" onload="this.style.display='block'; this.parentElement.style.background='none'; this.parentElement.style.border='none';">
+                        </div>
+                    </div>
+
+                <p class="text-sm text-gray-600">Users can read full PDF judgements without leaving the app.</p>
+            </section>
+            <section>
+                <h2 class="text-3xl font-bold mb-4">News Feed</h2>
+                
+                <!-- PLACEHOLDER FOR IMAGE -->
+                <div>
+                        <h3 class="text-lg font-bold"></h3>
+                        <div class="screenshot-placeholder" style="height: 500px;">
+                             <img src="nl.png" alt="News View" style="max-height: 100%; display: none;" onload="this.style.display='block'; this.parentElement.style.background='none'; this.parentElement.style.border='none';">
+                        </div>
+                    </div>
+
+                <p class="text-sm text-gray-600">We also provide a News Feed that fetches articles sorted by relevance to the legal field.</p>
+            </section>
+
+            <!-- SLIDE 9: Challenges (Optimized for space) -->
+            <section>
+                <h2 class="text-3xl font-bold mb-4">Challenges & Solutions</h2>
+                
+                <div class="space-y-2 text-left text-xs">
+                    <!-- Challenge 1 -->
+                    <div class="p-2 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
+                        <h4 class="font-bold text-red-700 text-sm">🛑 Challenge: AI Latency</h4>
+                        <p class="text-gray-700 mb-1">Generating summaries for 10 results sequentially took 15+ seconds.</p>
+                        <div class="flex items-start gap-2">
+                            <span class="text-green-700 font-bold uppercase tracking-wide shrink-0">✅ Solution:</span>
+                            <p class="text-gray-600">Implemented Python's <code>ThreadPoolExecutor</code> to fire 10 API requests in parallel. Reduced time to < 2s.</p>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 2 -->
+                    <div class="p-2 border-l-4 border-yellow-500 bg-yellow-50 rounded-r-lg">
+                        <h4 class="font-bold text-yellow-700 text-sm">⚠️ Challenge: Frontend State</h4>
+                        <p class="text-gray-700 mb-1">History dropdown was closing before clicks registered due to 'blur' event.</p>
+                        <div class="flex items-start gap-2">
+                            <span class="text-green-700 font-bold uppercase tracking-wide shrink-0">✅ Solution:</span>
+                            <p class="text-gray-600">Added a <code>setTimeout</code> delay in <code>main.js</code> to allow event propagation.</p>
+                        </div>
+                    </div>
+
+                    <!-- Challenge 3 -->
+                    <div class="p-2 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg">
+                        <h4 class="font-bold text-blue-700 text-sm">📊 Challenge: Data Consistency</h4>
+                        <p class="text-gray-700 mb-1">Scraping disparate legal sources resulted in duplicates and "spurious rows".</p>
+                        <div class="flex items-start gap-2">
+                            <span class="text-green-700 font-bold uppercase tracking-wide shrink-0">✅ Solution:</span>
+                            <p class="text-gray-600">Engineered a robust Pandas cleaning script to sanitize and normalize dataset structure.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="notes">
+                    The biggest technical challenge was speed. Calling the AI 10 times in a row was too slow.
+                    We solved this by using Multithreading in Python, allowing all 10 summaries to generate at the exact same time.
+                    We also faced issues with data cleanliness from scraping, which we solved with custom Pandas scripts.
+                </aside>
+            </section>
+
+            <!-- SLIDE 10: Conclusion -->
+            <section>
+                <h2 class="text-4xl font-bold mb-6">Conclusion</h2>
+                <div class="glass-card mb-8">
+                    <p class="text-xl mb-4">LegalToday bridges the gap between complex legal data and user intent.</p>
+                    <div class="grid grid-cols-3 gap-4 text-center mt-6">
+                        <div>
+                            <div class="text-3xl font-bold text-indigo-600">User-Friendly</div>
+                            <div class="text-sm">Interface</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-indigo-600">AI</div>
+                            <div class="text-sm">Powered Context</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-indigo-600">360°</div>
+                            <div class="text-sm">Integrated Ecosystem</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-500">Future Scope</h3>
+                <ul class="text-sm text-gray-600 list-disc inline-block text-left">
+                    <li>Chat-with-PDF functionality.</li>
+                    <li>Multilingual support (Regional languages).</li>
+                    <li>OCR for scanned PDF documents.</li>
+                </ul>
+                
+                <div class="mt-10 font-bold text-2xl text-indigo-600">Thank You! Need any Legal Help?</div>
+
+                <aside class="notes">
+                    To conclude, LegalToday makes legal research accessible and fast. 
+                    In the future, we plan to add Chat-with-PDF and translation features.
+                    Thank you for listening. We are open to questions.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Initialize Reveal.js and Mermaid -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/plugin/notes/notes.min.js"></script>
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+
+        // Initialize Reveal
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide', // none/fade/slide/convex/concave/zoom
+            plugins: [ RevealNotes ]
+        });
+    </script>
+</body>
+</html>

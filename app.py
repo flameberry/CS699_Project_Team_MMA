@@ -100,15 +100,9 @@ def index():
 @app.route('/news')
 def news():
     topic = request.args.get('topic','legal')
-    
+    indian_sources = 'livelaw.in,barandbench.com,timesofindia.indiatimes.com,thehindu.com,hindustantimes.com,indianexpress.com,ndtv.com,indiatoday.in,theprint.in'
     url = f"https://newsapi.org/v2/everything"
-    params = {
-        'q': topic,
-        'apiKey': NEWS_API_KEY,
-        'language': 'en',
-        'sortBy': 'relevancy',
-        'pageSize': 20
-    }
+    params = {'q': topic, 'domains': indian_sources, 'searchIn': 'title,description','apiKey': NEWS_API_KEY,'language': 'en','sortBy': 'relevancy','pageSize': 100}
     
     articles = []
     try:
@@ -120,11 +114,7 @@ def news():
     except:
         articles = []
 
-    return render_template('news.html', 
-                         articles=articles, 
-                         topic=topic,
-                         login_status=session.get("login_status", False), 
-                         name=session.get("name"))
+    return render_template('news.html', articles=articles, topic=topic,login_status=session.get("login_status", False), name=session.get("name"))
 
 @app.route('/search_query/<int:page_num>', methods=["GET", "POST"])
 def search_query(page_num):
@@ -145,25 +135,15 @@ def search_query(page_num):
             conn.commit()
             cursor.execute('''SELECT query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 5''', (email,))
             past_queries = [row for row in cursor.fetchall()]
-        
-        # Lawyer Suggestions
         suggested_lawyers = []
         try:
             practice_area = get_practice_area_keywords(query, api_keys[0])
             print(f"Extracted Practice Area: {practice_area}")
-            
-            # Fallback if AI fails or returns generic
             if practice_area == "General":
-                 # Simple keyword match
                  words = query.split()
                  practice_area = words[0] if words else ""
             
-            cursor.execute('''
-                SELECT * FROM lawyers 
-                WHERE specialization LIKE ? 
-                ORDER BY rating DESC 
-                LIMIT 3
-            ''', (f'%{practice_area}%',))
+            cursor.execute('''SELECT * FROM lawyers WHERE specialization LIKE ? ORDER BY rating DESC LIMIT 3''', (f'%{practice_area}%',))
             suggested_lawyers = cursor.fetchall()
         except Exception as e:
             print(f"Lawyer Suggestion Error: {e}")
@@ -208,24 +188,14 @@ def search_query(page_num):
             top_results = []
         page_nums = (page_num,int(np.ceil(len(top_results)/10)))
         ai_batch = top_results[(page_num-1)*10:page_num*10]
-        # static_batch = top_results[5:]
         
         ai_results_fixed = [None] * len(ai_batch)
-        # final_static_results = []
 
         def process_ai_item(data, api_key):
             index, item = data
             score, row = item
             summary = generate_summary(row['snippet'], query, api_key)
-            return index, {
-                "id": row['id'],
-                "case_id": row['case_id'],
-                "case_title": row['case_title'],
-                "title": row['case_title'],
-                "citation": row['citation'],
-                "judgement_date": row['judgement_date'],
-                "snippet": summary
-            }
+            return index, {"id": row['id'],"case_id": row['case_id'],"case_title": row['case_title'],"title": row['case_title'],"citation": row['citation'],"judgement_date": row['judgement_date'],"snippet": summary}
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             future_to_idx = {
                 executor.submit(process_ai_item, (i, item, api_keys[i%n_apis])): i 
@@ -240,13 +210,7 @@ def search_query(page_num):
                     original_idx = future_to_idx[future]
                     orig_row = ai_batch[original_idx][1]
                     ai_results_fixed[original_idx] = {
-                        "id": orig_row['id'],
-                        "case_id": orig_row['case_id'],
-                        "case_title": orig_row['case_title'],
-                        "title": orig_row['case_title'],
-                        "citation": orig_row['citation'],
-                        "judgement_date": orig_row['judgement_date'],
-                        "snippet": orig_row['snippet']
+                        "id": orig_row['id'],"case_id": orig_row['case_id'],"case_title": orig_row['case_title'],"title": orig_row['case_title'],"citation": orig_row['citation'],"judgement_date": orig_row['judgement_date'],"snippet": orig_row['snippet']
                     }
 
         final_cases = [x for x in ai_results_fixed if x is not None]
@@ -376,10 +340,9 @@ if __name__ == '__main__':
         snippet TEXT,
         embedding TEXT
     )''')
+
     cursor.execute('''CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, query TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     
-    # Force reset lawyers table if needed or just create
-    # To handle updates, we'll check if it's empty or just reload if CSV exists
     cursor.execute('DROP TABLE IF EXISTS lawyers')
     cursor.execute('''CREATE TABLE IF NOT EXISTS lawyers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
