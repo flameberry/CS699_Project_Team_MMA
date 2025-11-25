@@ -10,10 +10,6 @@ BASE_URL = "https://lawrato.com/lawyers?&page="
 OUTPUT_FILE = "lawyers.csv"
 
 def get_lawyer_details(lawyer_url):
-    """
-    Fetches the lawyer's profile page and extracts 'Practice Areas' and 'Rating'.
-    Returns a dictionary of updates.
-    """
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
     }
