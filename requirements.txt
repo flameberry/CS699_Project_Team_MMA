@@ -8,3 +8,6 @@ google-generativeai
 dotenv
 numpy
 sqlite3
+selenium
+webdriver_manager
+fitz

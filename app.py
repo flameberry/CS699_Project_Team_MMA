@@ -11,7 +11,6 @@ import google.generativeai as genai
 import numpy as np
 import json
 import concurrent.futures
-import re
 import requests
 import random
 
@@ -127,7 +126,7 @@ def search_query(page_num):
         cursor = conn.cursor()
         if session.get("login_status"):
             email = session["email"]
-            cursor.execute('''SELECT id, query FROM history WHERE email=? ORDER BY created_at DESC LIMIT 1''', (email,))
+            cursor.execute('''SELECT id, query FROM history WHERE email=? AND query=?''', (email,query))
             top_query = cursor.fetchone()
             if top_query and top_query['query'] == query:
                 cursor.execute("UPDATE history SET created_at = CURRENT_TIMESTAMP WHERE id = ?", (top_query['id'],))

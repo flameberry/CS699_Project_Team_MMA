@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import json
 import pandas as pd
 import time
-import random
 from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = "https://lawrato.com/lawyers?&page="
