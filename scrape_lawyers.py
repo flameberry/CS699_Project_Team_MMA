@@ -24,19 +24,15 @@ def get_lawyer_details(lawyer_url):
     }
     
     try:
-        # print(f"Fetching details for {lawyer_url}...")
         response = requests.get(lawyer_url, headers=headers, timeout=10)
         if response.status_code != 200:
             return updates
             
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # 1. Practice Areas
-        # Look for <span class="item-label">Practice areas: </span>
+
         labels = soup.find_all('span', class_='item-label')
         for label in labels:
             if 'Practice areas' in label.get_text():
-                # The next sibling span contains the comma-separated list
                 sibling = label.find_next_sibling('span')
                 if sibling:
                     updates["specialization"] = sibling.get_text(strip=True)
@@ -45,8 +41,6 @@ def get_lawyer_details(lawyer_url):
                  if sibling:
                      updates["experience"] = sibling.get_text(strip=True)
 
-        # 2. Rating
-        # <div class="rating"> <span class="score">4.7</span> ... </div>
         rating_div = soup.find('div', class_='rating')
         if rating_div:
             score_span = rating_div.find('span', class_='score')
@@ -72,8 +66,6 @@ def scrape_lawyers(max_pages=5):
         try:
             response = requests.get(url, headers=headers)
             soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # JSON-LD parsing
             scripts = soup.find_all('script', type='application/ld+json')
             page_lawyers = []
             
@@ -90,7 +82,6 @@ def scrape_lawyers(max_pages=5):
                                     'city': item.get('address', {}).get('addressLocality'),
                                     'state': item.get('address', {}).get('addressRegion'),
                                     'address': item.get('address', {}).get('streetAddress'),
-                                    # Init placeholders
                                     'specialization': 'General', 
                                     'experience': 'N/A',
                                     'rating': 'N/A'
@@ -101,13 +92,10 @@ def scrape_lawyers(max_pages=5):
             
             if page_lawyers:
                 print(f"  Found {len(page_lawyers)} lawyers. Fetching details...")
-                
-                # Parallel fetch for details to speed up
                 with ThreadPoolExecutor(max_workers=5) as executor:
                     urls = [l['url'] for l in page_lawyers]
                     results = list(executor.map(get_lawyer_details, urls))
-                    
-                # Merge results
+
                 for i, lawyer in enumerate(page_lawyers):
                     details = results[i]
                     if details['specialization']:

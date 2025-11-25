@@ -17,7 +17,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Config
 BASE = "https://scr.sci.gov.in"
 SEARCH_URL = f"{BASE}/scrsearch/?p=pdf_search/home"
 OUT_CSV = "scr_search_results.csv"
@@ -28,7 +27,6 @@ PAGE_LOAD_TIMEOUT = 12
 MAX_PDF_VERIFY_BYTES = 4096
 
 
-# Helpers
 def init_driver():
     opts = webdriver.ChromeOptions()
     opts.add_argument("--start-maximized")
@@ -74,9 +72,7 @@ def attach_cookies_to_session(session, cookies):
             pass
 
 
-# This is the filename fix (for macOS)
 def sanitize_filename(s: str):
-    # Remove all illegal characters, including colons AND forward slashes
     s = re.sub(r'[\\/*?:"<>|:/]', "_", s)
     s = re.sub(r"\s+", " ", s).strip()
     return s[:200]
@@ -86,24 +82,16 @@ def extract_title_from_pdf(pdf_path):
     """Opens a PDF and attempts to extract the case title from the first page."""
     try:
         doc = fitz.open(pdf_path)
-        page = doc[0]  # Get first page
+        page = doc[0]  
         text = page.get_text("text")
         doc.close()
-
-        # Regex to find the text between the INSC line and the line after the title
         match = re.search(r"INSC \d+\s+(.*?)\s+\(", text, re.DOTALL)
 
         if match:
             title_block = match.group(1)
-
-            # Clean up the text
-            # 1. Replace " V." (which is often on its own line) with " V. "
             title = re.sub(r"\s+V\.\s+", " V. ", title_block)
-            # 2. Replace all other newlines and extra spaces with a single space
             title = re.sub(r"\s+", " ", title).strip()
-
-            # Check if it's a valid title (not just whitespace)
-            if len(title) > 10:  # Reasonable title length > 10
+            if len(title) > 10:  
                 return title
         return None
     except Exception as e:
@@ -184,19 +172,15 @@ def verify_and_save_pdf(session, url, out_path, timeout=20):
         return False
 
     try:
-        # Just open the file and write the whole stream
         with open(out_path, "wb") as f:
-            for chunk in resp.iter_content(1024 * 32):  # 32KB chunks
+            for chunk in resp.iter_content(1024 * 32):
                 if chunk:
                     f.write(chunk)
-        # The download was successful
         return True
     except Exception as e:
         tqdm.write(f"\n[Debug] Error during file write for {out_path.name}: {e}")
         return False
 
-
-# Pagination Helpers
 def attempt_next_page_via_datatables(driver):
     js = """
     try {
@@ -221,14 +205,13 @@ def attempt_next_page_via_datatables(driver):
 
 def scrape_and_download(driver, session, base_results_url):
     all_rows_data = []
-    current_page_num = 1  # User-facing page number (1-based)
-    max_pages_to_scrape = 100  # Safety limit
+    current_page_num = 1  
+    max_pages_to_scrape = 100  
     rate_limit_hit = False
 
     while current_page_num <= max_pages_to_scrape:
         print(f"\nStarting processing for Page {current_page_num}")
 
-        # 1. Navigate to the target page from scratch
         try:
             print(f"Navigating to base URL...")
             driver.get(base_results_url)
@@ -237,9 +220,7 @@ def scrape_and_download(driver, session, base_results_url):
                     (By.CSS_SELECTOR, "table#example_pdf tbody tr")
                 )
             )
-            time.sleep(1.5)  # Wait for initial table load
-
-            # Click 'Next' (current_page_num - 1) times
+            time.sleep(1.5)  
             if current_page_num > 1:
                 print(
                     f"Clicking 'Next' {current_page_num - 1} times to reach page {current_page_num}..."
@@ -284,13 +265,13 @@ def scrape_and_download(driver, session, base_results_url):
                             ).text
                             != first_row_text_before
                         )
-                        time.sleep(1.0)  # Stability
+                        time.sleep(1.0) 
                     else:
                         tqdm.write("  API reports no next page.")
-                        rate_limit_hit = True  # Treat as end of pages
+                        rate_limit_hit = True  
                         break
                 if rate_limit_hit:
-                    break  # Exit page loop
+                    break 
 
             print(f"Successfully on Page {current_page_num}")
 
@@ -300,7 +281,6 @@ def scrape_and_download(driver, session, base_results_url):
             )
             break
 
-        # 2. Get rows for the current page
         try:
             page_rows_elements = driver.find_elements(
                 By.CSS_SELECTOR, "table#example_pdf tbody tr"
@@ -313,24 +293,19 @@ def scrape_and_download(driver, session, base_results_url):
         except Exception as e:
             print(f"Error finding rows on page {current_page_num}: {e}.")
             break
-
-        # 3. Process rows for this page only
         for i in range(num_rows_on_page):
             verified_url = ""
             text_data = {}
             saved_path = ""
-            title_for_log = f"Row {i + 1}"  # 1-based for logging
+            title_for_log = f"Row {i + 1}"  
 
             try:
-                # 1. Wait for the specific row to be present and find it
                 row_selector = f"table#example_pdf tbody tr:nth-child({i + 1})"
                 WebDriverWait(driver, PAGE_LOAD_TIMEOUT).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, row_selector))
                 )
                 time.sleep(0.7)
                 row = driver.find_element(By.CSS_SELECTOR, row_selector)
-
-                # 2. Extract text data (using the fixed HTML function)
                 row_html = row.get_attribute("outerHTML")
                 text_data = extract_text_from_row_html(row_html)
                 title_for_log = (
@@ -339,8 +314,6 @@ def scrape_and_download(driver, session, base_results_url):
                 tqdm.write(
                     f"Processing (Page {current_page_num}, Row {i + 1}): {title_for_log}"
                 )
-
-                # 3. Find and click the PDF link
                 pdf_link_element = row.find_element(
                     By.CSS_SELECTOR, "a[onclick*='open_pdf']"
                 )
@@ -350,12 +323,10 @@ def scrape_and_download(driver, session, base_results_url):
                 )
                 time.sleep(0.5)
                 driver.execute_script("arguments[0].click();", pdf_link_element)
-
-                # 4. Wait and get URL
                 time.sleep(4.0)
                 verified_url = driver.current_url
 
-                # 5. DOWNLOAD LOGIC
+
                 if verified_url.lower().endswith(".pdf"):
                     tqdm.write(f"  [Found URL] {verified_url}")
                     url_to_download = verified_url.replace(
@@ -377,14 +348,13 @@ def scrape_and_download(driver, session, base_results_url):
                         pdf_title = extract_title_from_pdf(out_path)
                         if pdf_title:
                             text_data["title"] = (
-                                pdf_title  # Overwrite with the better title
+                                pdf_title  
                             )
                             print(
                                 "Extracted and overwritten title from pdf: ", pdf_title
                             )
                             tqdm.write(f"  [Found PDF Title] {pdf_title}")
 
-                            # Rename the pdf with the title found
                             new_path = PDF_DIR / f"{pdf_title}.pdf"
                             try:
                                 out_path.rename(new_path)
@@ -402,7 +372,6 @@ def scrape_and_download(driver, session, base_results_url):
                     )
                     rate_limit_hit = True
 
-                # NAVIGATION LOGIC
                 delay = random.uniform(3.5, 5.5)
                 tqdm.write(f"  Delaying for {delay:.1f}s...")
                 time.sleep(delay)
@@ -455,14 +424,13 @@ def scrape_and_download(driver, session, base_results_url):
                             rate_limit_hit = True
                             break
                     if rate_limit_hit:
-                        break  # Exit row loop
-
+                        break  
                 WebDriverWait(driver, PAGE_LOAD_TIMEOUT).until(
                     EC.presence_of_element_located(
                         (By.CSS_SELECTOR, "table#example_pdf tbody tr")
                     )
                 )
-                time.sleep(1.5)  # Final stability wait
+                time.sleep(1.5)  
 
             except Exception as e:
                 tqdm.write(
@@ -470,31 +438,25 @@ def scrape_and_download(driver, session, base_results_url):
                 )
                 tqdm.write("  Attempting to recover by reloading base URL...")
                 try:
-                    driver.get(base_results_url)  # Go to base URL
+                    driver.get(base_results_url)  
                     WebDriverWait(driver, PAGE_LOAD_TIMEOUT).until(
                         EC.presence_of_element_located((By.ID, "example_pdf"))
                     )
                     tqdm.write("  Recovery successful. Continuing to next row...")
-                    continue  # Skip saving this row, move to next 'i'
+                    continue  
                 except Exception as recovery_e:
                     tqdm.write(f"  [CRITICAL] Recovery failed: {recovery_e}.")
-                    rate_limit_hit = True  # Treat as fatal
+                    rate_limit_hit = True  
 
-            # End of try/except for a single row
-
-            # Save data
             text_data["pdf_path_or_url"] = saved_path or verified_url
             all_rows_data.append(text_data)
 
             if rate_limit_hit:
-                break  # Exit row loop
-        # End of loop for rows on current page
+                break  
 
         if rate_limit_hit:
             print("Rate limit hit or error, stopping outer page loop.")
-            break  # Exit page loop
-
-        # 4. Check for next page and increment
+            break  
         try:
             WebDriverWait(driver, PAGE_LOAD_TIMEOUT).until(
                 lambda d: d.execute_script(
@@ -511,19 +473,16 @@ def scrape_and_download(driver, session, base_results_url):
                 )
             else:
                 print("Reached the last page according to DataTables or info is null.")
-                break  # Exit the outer while loop
+                break  
         except Exception as e:
             print(f"Error getting page info to check for next page: {e}.")
             break
-        # End of outer while loop for pages
 
     return all_rows_data
 
 
 def main():
     driver = init_driver()
-
-    # Create ONE session to be used for all downloads
     session = requests.Session()
     session.headers.update(
         {
@@ -538,16 +497,12 @@ def main():
     try:
         wait_for_user_to_solve(driver, query="Robbery")
 
-        # Capture the base results page URL after solving CAPTCHA and searching
         base_results_url = driver.current_url
         print(f"Base results URL captured: {base_results_url}")
 
-        # Update session with cookies and Referer from the logged-in page
         cookies = get_selenium_cookies(driver)
         attach_cookies_to_session(session, cookies)
-        session.headers.update({"Referer": base_results_url})  # Use base URL as referer
-
-        # This one function now does all the work
+        session.headers.update({"Referer": base_results_url})  
         scraped_data = scrape_and_download(driver, session, base_results_url)
 
         print(f"\nAll Scraping Complete")
@@ -556,7 +511,6 @@ def main():
             print("No rows found. Exiting.")
             return
 
-        # Save the collected data to CSV
         df = pd.DataFrame(scraped_data)
         df.to_csv(OUT_CSV, index=False)
 
