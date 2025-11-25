@@ -13,6 +13,7 @@ import json
 import concurrent.futures
 import re
 import requests
+import random
 
 load_dotenv()
 
@@ -139,12 +140,16 @@ def search_query(page_num):
         try:
             practice_area = get_practice_area_keywords(query, api_keys[0])
             print(f"Extracted Practice Area: {practice_area}")
-            if practice_area == "General":
-                 words = query.split()
-                 practice_area = words[0] if words else ""
+            search_term = practice_area if practice_area != "General" else ""
             
-            cursor.execute('''SELECT * FROM lawyers WHERE specialization LIKE ? ORDER BY rating DESC LIMIT 3''', (f'%{practice_area}%',))
-            suggested_lawyers = cursor.fetchall()
+            cursor.execute("SELECT * FROM lawyers WHERE specialization LIKE ? ORDER BY rating DESC LIMIT 10", (f'%{search_term}%',))
+            top_matches = cursor.fetchall()
+            
+            if len(top_matches) > 3:
+                suggested_lawyers = random.sample(top_matches, 3)
+            else:
+                suggested_lawyers = top_matches
+                
         except Exception as e:
             print(f"Lawyer Suggestion Error: {e}")
 

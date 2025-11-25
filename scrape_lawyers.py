@@ -10,10 +10,6 @@ BASE_URL = "https://lawrato.com/lawyers?&page="
 OUTPUT_FILE = "lawyers.csv"
 
 def get_lawyer_details(lawyer_url):
-    """
-    Fetches the lawyer's profile page and extracts 'Practice Areas' and 'Rating'.
-    Returns a dictionary of updates.
-    """
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
     }
@@ -31,7 +27,6 @@ def get_lawyer_details(lawyer_url):
             
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # 1. Practice Areas
         # Look for <span class="item-label">Practice areas: </span>
         labels = soup.find_all('span', class_='item-label')
         for label in labels:
@@ -45,7 +40,6 @@ def get_lawyer_details(lawyer_url):
                  if sibling:
                      updates["experience"] = sibling.get_text(strip=True)
 
-        # 2. Rating
         # <div class="rating"> <span class="score">4.7</span> ... </div>
         rating_div = soup.find('div', class_='rating')
         if rating_div:
@@ -102,12 +96,10 @@ def scrape_lawyers(max_pages=5):
             if page_lawyers:
                 print(f"  Found {len(page_lawyers)} lawyers. Fetching details...")
                 
-                # Parallel fetch for details to speed up
                 with ThreadPoolExecutor(max_workers=5) as executor:
                     urls = [l['url'] for l in page_lawyers]
                     results = list(executor.map(get_lawyer_details, urls))
                     
-                # Merge results
                 for i, lawyer in enumerate(page_lawyers):
                     details = results[i]
                     if details['specialization']:

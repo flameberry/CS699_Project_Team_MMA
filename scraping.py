@@ -28,7 +28,6 @@ PAGE_LOAD_TIMEOUT = 12
 MAX_PDF_VERIFY_BYTES = 4096
 
 
-# Helpers
 def init_driver():
     opts = webdriver.ChromeOptions()
     opts.add_argument("--start-maximized")
@@ -76,7 +75,7 @@ def attach_cookies_to_session(session, cookies):
 
 # This is the filename fix (for macOS)
 def sanitize_filename(s: str):
-    # Remove all illegal characters, including colons AND forward slashes
+    # Remove all illegal characters, including colons and forward slashes
     s = re.sub(r'[\\/*?:"<>|:/]', "_", s)
     s = re.sub(r"\s+", " ", s).strip()
     return s[:200]
@@ -97,7 +96,6 @@ def extract_title_from_pdf(pdf_path):
             title_block = match.group(1)
 
             # Clean up the text
-            # 1. Replace " V." (which is often on its own line) with " V. "
             title = re.sub(r"\s+V\.\s+", " V. ", title_block)
             # 2. Replace all other newlines and extra spaces with a single space
             title = re.sub(r"\s+", " ", title).strip()
@@ -184,12 +182,10 @@ def verify_and_save_pdf(session, url, out_path, timeout=20):
         return False
 
     try:
-        # Just open the file and write the whole stream
         with open(out_path, "wb") as f:
             for chunk in resp.iter_content(1024 * 32):  # 32KB chunks
                 if chunk:
                     f.write(chunk)
-        # The download was successful
         return True
     except Exception as e:
         tqdm.write(f"\n[Debug] Error during file write for {out_path.name}: {e}")
@@ -222,7 +218,7 @@ def attempt_next_page_via_datatables(driver):
 def scrape_and_download(driver, session, base_results_url):
     all_rows_data = []
     current_page_num = 1  # User-facing page number (1-based)
-    max_pages_to_scrape = 100  # Safety limit
+    max_pages_to_scrape = 100
     rate_limit_hit = False
 
     while current_page_num <= max_pages_to_scrape:
@@ -239,7 +235,6 @@ def scrape_and_download(driver, session, base_results_url):
             )
             time.sleep(1.5)  # Wait for initial table load
 
-            # Click 'Next' (current_page_num - 1) times
             if current_page_num > 1:
                 print(
                     f"Clicking 'Next' {current_page_num - 1} times to reach page {current_page_num}..."
@@ -290,7 +285,7 @@ def scrape_and_download(driver, session, base_results_url):
                         rate_limit_hit = True  # Treat as end of pages
                         break
                 if rate_limit_hit:
-                    break  # Exit page loop
+                    break 
 
             print(f"Successfully on Page {current_page_num}")
 
@@ -355,7 +350,7 @@ def scrape_and_download(driver, session, base_results_url):
                 time.sleep(4.0)
                 verified_url = driver.current_url
 
-                # 5. DOWNLOAD LOGIC
+                # 5. Download Logic
                 if verified_url.lower().endswith(".pdf"):
                     tqdm.write(f"  [Found URL] {verified_url}")
                     url_to_download = verified_url.replace(
@@ -402,7 +397,7 @@ def scrape_and_download(driver, session, base_results_url):
                     )
                     rate_limit_hit = True
 
-                # NAVIGATION LOGIC
+                # Navigation Logic
                 delay = random.uniform(3.5, 5.5)
                 tqdm.write(f"  Delaying for {delay:.1f}s...")
                 time.sleep(delay)
@@ -480,15 +475,12 @@ def scrape_and_download(driver, session, base_results_url):
                     tqdm.write(f"  [CRITICAL] Recovery failed: {recovery_e}.")
                     rate_limit_hit = True  # Treat as fatal
 
-            # End of try/except for a single row
-
             # Save data
             text_data["pdf_path_or_url"] = saved_path or verified_url
             all_rows_data.append(text_data)
 
             if rate_limit_hit:
                 break  # Exit row loop
-        # End of loop for rows on current page
 
         if rate_limit_hit:
             print("Rate limit hit or error, stopping outer page loop.")
@@ -523,7 +515,7 @@ def scrape_and_download(driver, session, base_results_url):
 def main():
     driver = init_driver()
 
-    # Create ONE session to be used for all downloads
+    # Create one session to be used for all downloads
     session = requests.Session()
     session.headers.update(
         {
