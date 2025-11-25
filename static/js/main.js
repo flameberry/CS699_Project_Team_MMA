@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.querySelectorAll(".recent-query-link").forEach(item => {
                 item.addEventListener("click", (e) => {
-                    e.preventDefault(); // Prevent default link behavior
-                    searchbar.value = item.dataset.query; // Get query from data-query attribute
+                    e.preventDefault();
+                    searchbar.value = item.dataset.query; 
                     historyDrop.style.display = "none";
                 });
             });
@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.login === false) {
                         alert("Logged out successfully!");
                         window.location.href = "/"; 
-                        // location.reload();
                     }
                 })
                 .catch((err) => console.error("Logout failed:", err));
@@ -52,10 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-
-
-    // Shared function to handle login and registration on each page
     const handleAuthMod = () => {
         const authMod = document.getElementById('auth-mod');
         if (!authMod) return;
@@ -80,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginFormDiv.innerHTML = '<input type="text" placeholder="Name" class="form-input" name="name" id="reg-name" required><input type="date" placeholder="Date Of Birth" class="form-input" name="dob" id = "reg-dob" required>' + loginFormDiv.innerHTML;
                 modSwitchText.innerHTML = `Already have an account? <a href="#" id="mod-switch-link" class="link">Login</a>`;
             }
-            authMod.classList.add('active'); // Use class for transition
+            authMod.classList.add('active'); 
             
             const link = document.getElementById('mod-switch-link');
             if (link) {

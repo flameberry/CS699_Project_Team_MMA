@@ -63,7 +63,6 @@
     font-size: 1.35rem;
     font-weight: 700;
     color: var(--color-text-main);
-    /* Not primary, looks cleaner */
     margin: 0 0 8px 0;
 }
 
@@ -195,7 +194,6 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    /* Truncate to 2 lines */
     -webkit-box-orient: vertical;
     flex-grow: 1;
     line-height: 1.5;

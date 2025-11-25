@@ -10,11 +10,6 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-    .d-content {
-        background-color: var(--color-surface-dark);
-    }
-}
 
 .d-header h1 {
     font-size: 2rem;
@@ -29,11 +24,6 @@
     margin-bottom: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .d-header .citation {
-        color: var(--color-muted-dark);
-    }
-}
 
 .metadata {
     display: flex;
@@ -46,11 +36,6 @@
     margin-bottom: 1.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .metadata {
-        border-color: var(--color-border-dark);
-    }
-}
 
 .d-body {
     line-height: 1.7;
